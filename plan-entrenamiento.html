@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan de Entrenamiento · Natación + Elíptica</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Epilogue:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e14;
+    --surface: #111620;
+    --surface2: #171d28;
+    --border: #1e2736;
+    --accent-water: #38bdf8;
+    --accent-move: #a78bfa;
+    --accent-rest: #34d399;
+    --accent-warn: #fb923c;
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --text-dim: #334155;
+    --done-bg: #0f2d1a;
+    --done-border: #166534;
+    --done-text: #4ade80;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Epilogue', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(56,189,248,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* HEADER */
+  header {
+    margin-bottom: 48px;
+  }
+
+  .header-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent-water);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+
+  h1 span {
+    color: var(--accent-water);
+  }
+
+  /* PROGRESS GLOBAL */
+  .global-progress {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+  }
+
+  .stat-item label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .stat-num span {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .progress-bar-wrap {
+    margin-top: 20px;
+    grid-column: 1 / -1;
+  }
+
+  .progress-bar-wrap label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .bar-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-water), var(--accent-move));
+    border-radius: 99px;
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    width: 0%;
+  }
+
+  /* LEYENDA */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* SEMANAS */
+  .week-block {
+    margin-bottom: 40px;
+  }
+
+  .week-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .week-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .week-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    background: var(--surface2);
+    padding: 3px 10px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+  }
+
+  .week-progress-inline {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .week-progress-inline strong {
+    color: var(--accent-water);
+    font-size: 14px;
+  }
+
+  /* DÍAS */
+  .day-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .day-card:hover {
+    border-color: #2a3a52;
+  }
+
+  .day-card.completed {
+    border-color: var(--done-border);
+    background: var(--done-bg);
+  }
+
+  .day-header {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    gap: 14px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .day-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    width: 60px;
+    flex-shrink: 0;
+  }
+
+  .day-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    flex: 1;
+  }
+
+  .day-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    border: 1px solid;
+    letter-spacing: 0.05em;
+  }
+
+  .tag-natacion { color: var(--accent-water); border-color: rgba(56,189,248,0.3); background: rgba(56,189,248,0.06); }
+  .tag-eliptica { color: var(--accent-move); border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.06); }
+  .tag-descanso { color: var(--accent-rest); border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.06); }
+  .tag-hiit { color: var(--accent-warn); border-color: rgba(251,146,60,0.3); background: rgba(251,146,60,0.06); }
+
+  .day-chevron {
+    color: var(--text-muted);
+    transition: transform 0.25s;
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .day-card.open .day-chevron { transform: rotate(180deg); }
+
+  /* CONTENIDO EXPANDIDO */
+  .day-content {
+    display: none;
+    padding: 0 20px 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .day-card.open .day-content { display: block; }
+
+  .session-block {
+    padding-top: 18px;
+  }
+
+  .session-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .session-label.water { color: var(--accent-water); }
+  .session-label.move { color: var(--accent-move); }
+
+  .session-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* EJERCICIOS */
+  .exercise-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+  .exercise-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--surface2);
+    border-radius: 10px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .exercise-item:hover {
+    border-color: var(--border);
+  }
+
+  .exercise-item.done {
+    background: rgba(74,222,128,0.05);
+    border-color: rgba(74,222,128,0.15);
+  }
+
+  .exercise-item.done .ex-title {
+    text-decoration: line-through;
+    color: var(--text-muted);
+  }
+
+  .ex-check {
+    width: 18px; height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid var(--text-dim);
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 11px;
+  }
+
+  .exercise-item.done .ex-check {
+    background: var(--accent-rest);
+    border-color: var(--accent-rest);
+    color: #0a0e14;
+  }
+
+  .ex-body { flex: 1; }
+
+  .ex-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.4;
+    transition: color 0.2s;
+  }
+
+  .ex-detail {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    font-weight: 300;
+  }
+
+  .ex-meta {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+
+  .ex-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    background: var(--border);
+    color: var(--text-muted);
+  }
+
+  .ex-pill.z2 { background: rgba(56,189,248,0.1); color: var(--accent-water); }
+  .ex-pill.z3 { background: rgba(251,146,60,0.1); color: var(--accent-warn); }
+  .ex-pill.z4 { background: rgba(239,68,68,0.1); color: #f87171; }
+  .ex-pill.z1 { background: rgba(52,211,153,0.1); color: var(--accent-rest); }
+
+  /* BOTÓN MARCAR DÍA */
+  .mark-day-btn {
+    margin-top: 16px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px dashed var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .mark-day-btn:hover {
+    border-color: var(--accent-rest);
+    color: var(--accent-rest);
+  }
+
+  .day-card.completed .mark-day-btn {
+    border-color: rgba(74,222,128,0.3);
+    color: var(--accent-rest);
+    background: rgba(74,222,128,0.05);
+  }
+
+  /* RESET */
+  .reset-btn {
+    display: block;
+    margin: 40px auto 0;
+    padding: 10px 28px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .reset-btn:hover {
+    border-color: #f87171;
+    color: #f87171;
+  }
+
+  /* TOOLTIP zona */
+  .zone-info {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .zi { font-family: 'DM Mono', monospace; font-size: 10px; }
+  .zi span { color: var(--text-muted); }
+
+  @media (max-width: 600px) {
+    .global-progress { grid-template-columns: 1fr 1fr; }
+    .progress-bar-wrap { grid-column: 1 / -1; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <header>
+    <div class="header-label">Mesociclo I · 4 semanas</div>
+    <h1>Natación <span>+</span><br>Elíptica</h1>
+  </header>
+
+  <!-- PROGRESO GLOBAL -->
+  <div class="global-progress">
+    <div class="stat-item">
+      <label>Días completados</label>
+      <div class="stat-num" id="days-done">0 <span>/ 28</span></div>
+    </div>
+    <div class="stat-item">
+      <label>Ejercicios hechos</label>
+      <div class="stat-num" id="ex-done">0 <span>/ <span id="ex-total">0</span></span></div>
+    </div>
+    <div class="stat-item">
+      <label>Avance general</label>
+      <div class="stat-num" id="pct-done">0<span>%</span></div>
+    </div>
+    <div class="progress-bar-wrap">
+      <label><span>Progreso del mes</span><span id="pct-label">0%</span></label>
+      <div class="bar-track"><div class="bar-fill" id="main-bar"></div></div>
+    </div>
+  </div>
+
+  <!-- LEYENDA -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-water)"></div>Natación</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-move)"></div>Elíptica</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-warn)"></div>HIIT</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-rest)"></div>Descarga / Z1</div>
+  </div>
+
+  <div id="plan-container"></div>
+
+  <button class="reset-btn" onclick="resetAll()">↺ Reiniciar progreso</button>
+
+</div>
+
+<script>
+const PLAN = [
+  // =========================================================
+  // SEMANA 1 – BASE AERÓBICA
+  // =========================================================
+  {
+    week: 1,
+    weekTitle: "Semana 1",
+    weekTag: "Base aeróbica · volumen moderado",
+    days: [
+      {
+        id: "s1d1",
+        dayName: "Lunes",
+        tags: ["eliptica"],
+        sessions: [
+          {
+            type: "move",
+            label: "Elíptica · 35 min",
+            exercises: [
+              {
+                id: "s1d1e1",
+                title: "Calentamiento – 5 min en Zona 1",
+                detail: "Resistencia nivel 2–3. Cadencia suave, entre 50–60 rpm. Permite que la frecuencia cardíaca suba de manera gradual. Brazos apoyados levemente en las barras, sin empujar.",
+                meta: ["5 min", "Z1", "Res. 2–3"]
+              },
+              {
+                id: "s1d1e2",
+                title: "Zona 2 continua – 25 min",
+                detail: "Resistencia nivel 4–5. Cadencia de 65–75 rpm. Deberías poder hablar con esfuerzo moderado pero no cantar. Mantén la espalda erguida, activa los brazos alternando con las piernas (derecha adelante = brazo izquierdo empuja). Esta coordinación cruzada fortalece el patrón motor útil en la brazada.",
+                meta: ["25 min", "Z2", "Res. 4–5", "60–70% FCM"]
+              },
+              {
+                id: "s1d1e3",
+                title: "Enfriamiento – 5 min en Zona 1",
+                detail: "Reduce resistencia a nivel 2 y disminuye cadencia paulatinamente. Lleva la respiración a ritmo normal antes de bajarte de la máquina.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s1d2",
+        dayName: "Martes",
+        tags: ["eliptica"],
+        sessions: [
+          {
+            type: "move",
+            label: "Elíptica · 35 min · Pedaleo invertido",
+            exercises: [
+              {
+                id: "s1d2e1",
+                title: "Calentamiento – 5 min en Zona 1 (marcha adelante)",
+                detail: "Resistencia 2. Cadencia suave. Activa articulaciones de cadera y rodilla antes del cambio de dirección.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s1d2e2",
+                title: "Zona 2 hacia adelante – 15 min",
+                detail: "Resistencia 4–5. Cadencia estable 65–70 rpm. Concéntrate en empujar con el talón en la parte baja del movimiento, que activa más el glúteo mayor. Este músculo es clave en el pateo de natación.",
+                meta: ["15 min", "Z2", "Res. 4–5"]
+              },
+              {
+                id: "s1d2e3",
+                title: "Pedaleo invertido – 10 min en Zona 2",
+                detail: "Invierte la dirección del pedaleo (marcha atrás). Resistencia 3–4. Este movimiento activa con mayor énfasis el bíceps femoral y los gemelos, y además exige mayor atención del sistema nervioso. En natación, estos grupos son determinantes durante la fase de propulsión del pateo de crol. Mantén la postura erguida aunque se sienta diferente.",
+                meta: ["10 min", "Z2", "Res. 3–4", "Invertido"]
+              },
+              {
+                id: "s1d2e4",
+                title: "Enfriamiento – 5 min en Zona 1",
+                detail: "Vuelve a la marcha adelante, resistencia 2, cadencia muy baja. Respiración controlada.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s1d3",
+        dayName: "Miércoles",
+        tags: ["natacion", "eliptica"],
+        sessions: [
+          {
+            type: "water",
+            label: "Natación · Sesión técnica",
+            exercises: [
+              {
+                id: "s1d3n1",
+                title: "Entrada al agua y calentamiento – 100 m crol suave",
+                detail: "Nada sin presión. El objetivo es que el cuerpo recuerde el patrón del movimiento. Respira cada 3 brazadas (bilateral).",
+                meta: ["100 m", "Suave"]
+              },
+              {
+                id: "s1d3n2",
+                title: "Series cortas de técnica – 6 × 25 m con 30 seg de descanso",
+                detail: "Cada 25 m concentra la atención en un aspecto técnico diferente: 1er y 2do largo: posición de la mano en el agua al entrar (dedos juntos, pulgar mirando hacia abajo). 3er y 4to largo: rotación del tronco al respirar (no levantar la cabeza, girarla). 5to y 6to largo: pateo constante y sin doblar excesivamente la rodilla. Descansa 30 segundos entre cada largo.",
+                meta: ["6 × 25 m", "30 seg descanso"]
+              },
+              {
+                id: "s1d3n3",
+                title: "Vuelta a la calma – 50 m de nado libre a ritmo muy bajo",
+                detail: "Sin presión de tiempo ni técnica. Solo flotar y mantener el movimiento.",
+                meta: ["50 m", "Libre"]
+              }
+            ]
+          },
+          {
+            type: "move",
+            label: "Elíptica post-natación · 30 min",
+            exercises: [
+              {
+                id: "s1d3e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Después de la natación, el cuerpo ya está activo. El calentamiento aquí es más corto pero necesario para adaptar el sistema cardiovascular al movimiento terrestre.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s1d3e2",
+                title: "Zona 2 continua – 20 min",
+                detail: "Resistencia 4. Cadencia estable 65 rpm. Esta es una sesión de refuerzo aeróbico posterior a la natación. No busques sensaciones intensas; el objetivo es sumar volumen cardiovascular de manera controlada. Usa los brazos activamente.",
+                meta: ["20 min", "Z2", "Res. 4"]
+              },
+              {
+                id: "s1d3e3",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Resistencia 2, cadencia lenta. Estira suavemente al finalizar: cuádriceps, gemelos y hombros.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s1d4",
+        dayName: "Jueves",
+        tags: ["eliptica"],
+        sessions: [
+          {
+            type: "move",
+            label: "Elíptica · 35 min · Intervalos suaves",
+            exercises: [
+              {
+                id: "s1d4e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2–3. Cadencia suave hasta alcanzar el ritmo respiratorio de conversación.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s1d4e2",
+                title: "Bloques alternados Z2–Z3 – 5 rondas × (3 min Z2 + 2 min Z3)",
+                detail: "Resistencia en Z2: nivel 4–5. Resistencia en Z3: nivel 6–7. La cadencia no cambia (mantén 65–70 rpm); lo que varía es la resistencia. En Z3 la conversación se vuelve más difícil pero sigue siendo posible con frases cortas. Este contraste introduce al sistema cardiovascular a trabajo más exigente de manera progresiva.",
+                meta: ["5 rondas", "Z2 → Z3", "25 min"]
+              },
+              {
+                id: "s1d4e3",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Resistencia 2. Cadencia muy suave. Regula la respiración antes de bajar.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s1d5",
+        dayName: "Viernes",
+        tags: ["natacion", "eliptica"],
+        sessions: [
+          {
+            type: "water",
+            label: "Natación · Sesión de respiración y ritmo",
+            exercises: [
+              {
+                id: "s1d5n1",
+                title: "Calentamiento – 100 m crol continuo",
+                detail: "Ritmo tranquilo. Respiración bilateral (cada 3 brazadas). Siente el deslizamiento del cuerpo en el agua.",
+                meta: ["100 m", "Crol suave"]
+              },
+              {
+                id: "s1d5n2",
+                title: "Trabajo de pateo con tabla – 4 × 25 m",
+                detail: "Sostén la tabla con ambas manos extendidas al frente. Solo actúan las piernas. El pateo debe venir de la cadera, no de la rodilla. Los pies permanecen relajados (tobillo flexible). Descansa 30 seg entre cada largo. Este ejercicio fortalece exactamente los grupos musculares que trabaja la elíptica en marcha atrás.",
+                meta: ["4 × 25 m", "30 seg descanso", "Solo piernas"]
+              },
+              {
+                id: "s1d5n3",
+                title: "Series de nado completo – 4 × 50 m con 45 seg descanso",
+                detail: "Nada cada 50 m a ritmo cómodo, sin apresurarte. Concéntrate en que cada brazada sea larga y que el cuerpo rote levemente al respirar. El descanso es de 45 segundos entre cada repetición.",
+                meta: ["4 × 50 m", "45 seg descanso"]
+              }
+            ]
+          },
+          {
+            type: "move",
+            label: "Elíptica post-natación · 30 min",
+            exercises: [
+              {
+                id: "s1d5e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2. Cuerpo ya activo por la natación; el calentamiento sirve para ajustar la postura en la máquina.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s1d5e2",
+                title: "Zona 2 continua – 20 min",
+                detail: "Resistencia 4. Cadencia estable. Sesión tranquila post-natación. El foco es acumular volumen aeróbico, no generar fatiga adicional.",
+                meta: ["20 min", "Z2", "Res. 4"]
+              },
+              {
+                id: "s1d5e3",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Resistencia 2. Finaliza con algunos minutos de pie, respiración profunda antes de sentarte.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s1d6",
+        dayName: "Sábado",
+        tags: ["natacion", "eliptica"],
+        sessions: [
+          {
+            type: "water",
+            label: "Natación · Sesión matutina de resistencia base",
+            exercises: [
+              {
+                id: "s1d6n1",
+                title: "Calentamiento – 150 m mixto",
+                detail: "50 m crol suave + 50 m espalda muy tranquila + 50 m crol. El objetivo es activar los grupos musculares del tren superior de manera más amplia.",
+                meta: ["150 m", "Mixto suave"]
+              },
+              {
+                id: "s1d6n2",
+                title: "Series de resistencia base – 5 × 50 m con 40 seg descanso",
+                detail: "Nada cada 50 m a una intensidad donde puedas mantener la técnica sin que se deteriore. Si sientes que la brazada se deforma hacia el final, ve más despacio. El objetivo es consistencia técnica, no velocidad.",
+                meta: ["5 × 50 m", "40 seg descanso"]
+              },
+              {
+                id: "s1d6n3",
+                title: "Vuelta a la calma – 100 m muy suave",
+                detail: "Nado libre, ritmo propio, sin objetivo técnico. Disfruta el movimiento en el agua.",
+                meta: ["100 m", "Muy suave"]
+              }
+            ]
+          },
+          {
+            type: "move",
+            label: "Elíptica post-natación · 35 min",
+            exercises: [
+              {
+                id: "s1d6e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2. El cuerpo viene de nadar, así que el sistema cardiorrespiratorio está activo. El calentamiento es breve.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s1d6e2",
+                title: "Zona 2 hacia adelante – 15 min",
+                detail: "Resistencia 5. Cadencia 65–70 rpm. Mantén los brazos activos en las barras móviles. Esto involucra el dorsal ancho (músculo principal en la brazada de crol).",
+                meta: ["15 min", "Z2", "Res. 5"]
+              },
+              {
+                id: "s1d6e3",
+                title: "Pedaleo invertido – 10 min Zona 2",
+                detail: "Resistencia 3–4. Marcha atrás. Mantén el torso estable y sin arquearse.",
+                meta: ["10 min", "Z2", "Invertido"]
+              },
+              {
+                id: "s1d6e4",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Resistencia 2, cadencia muy suave. Esta es la sesión más exigente de la semana en términos de tiempo acumulado, así que el enfriamiento es especialmente importante.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s1d7",
+        dayName: "Domingo",
+        tags: ["eliptica"],
+        sessions: [
+          {
+            type: "move",
+            label: "Elíptica · 30 min · Descarga activa",
+            exercises: [
+              {
+                id: "s1d7e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 1–2. Este es el día de menor exigencia de toda la semana. El objetivo es mover el cuerpo sin generar fatiga.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s1d7e2",
+                title: "Sesión de descarga – 20 min Zona 1",
+                detail: "Resistencia máxima: nivel 3. Cadencia baja, entre 50–55 rpm. No debe haber esfuerzo perceptible; si sientes el corazón acelerado, baja la resistencia. Esta sesión favorece la recuperación muscular activa y mantiene el hábito diario sin comprometer la recuperación del organismo.",
+                meta: ["20 min", "Z1", "Res. 1–3", "Recuperación"]
+              },
+              {
+                id: "s1d7e3",
+                title: "Enfriamiento + movilidad – 5 min",
+                detail: "Finaliza con 5 minutos de caminata estática muy suave y luego realiza estiramiento de cuádriceps (30 seg c/pierna), isquiotibiales (30 seg) y rotación de hombros.",
+                meta: ["5 min", "Movilidad"]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  // =========================================================
+  // SEMANA 2 – CONSTRUCCIÓN AERÓBICA
+  // =========================================================
+  {
+    week: 2,
+    weekTitle: "Semana 2",
+    weekTag: "Construcción aeróbica · volumen creciente",
+    days: [
+      {
+        id: "s2d1",
+        dayName: "Lunes",
+        tags: ["eliptica"],
+        sessions: [
+          {
+            type: "move",
+            label: "Elíptica · 40 min · Zona 2 extendida",
+            exercises: [
+              {
+                id: "s2d1e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2–3. Cadencia creciente desde 50 hasta 65 rpm a lo largo de los 5 minutos.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s2d1e2",
+                title: "Zona 2 continua – 30 min con brazos activos",
+                detail: "Resistencia 5. Cadencia 65–70 rpm. Esta semana el foco es involucrar activamente los brazos en las barras móviles: empuja cuando el pie del lado contrario avanza. El dorsal ancho, el trapecio medio y los deltoides posteriores —todos relevantes en la brazada— trabajan directamente. Si el corazón sube de Z2, baja medio nivel de resistencia.",
+                meta: ["30 min", "Z2", "Res. 5", "Brazos activos"]
+              },
+              {
+                id: "s2d1e3",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Resistencia 2. Cadencia decreciente. Regula la respiración.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s2d2",
+        dayName: "Martes",
+        tags: ["eliptica"],
+        sessions: [
+          {
+            type: "move",
+            label: "Elíptica · 35 min · Pirámide de resistencia",
+            exercises: [
+              {
+                id: "s2d2e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2. Cadencia suave.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s2d2e2",
+                title: "Pirámide ascendente – 3 bloques de 5 min",
+                detail: "Bloque 1: 5 min a resistencia 4 (Z2 baja). Bloque 2: 5 min a resistencia 6 (Z2 alta / inicio Z3). Bloque 3: 5 min a resistencia 8 (Z3 firme). La cadencia se mantiene constante en 65 rpm. El esfuerzo aumenta al crecer la resistencia. En el bloque 3, la conversación solo es posible con palabras cortas.",
+                meta: ["3 × 5 min", "Res. 4→6→8", "Z2→Z3"]
+              },
+              {
+                id: "s2d2e3",
+                title: "Pirámide descendente – 2 bloques de 5 min",
+                detail: "Bloque 4: 5 min a resistencia 6 (Z2 alta). Bloque 5: 5 min a resistencia 4 (Z2 cómoda). La frecuencia cardíaca desciende de manera progresiva. Este patrón entrena la capacidad de recuperación cardiovascular.",
+                meta: ["2 × 5 min", "Res. 6→4", "Z3→Z2"]
+              },
+              {
+                id: "s2d2e4",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Resistencia 2. Cadencia decreciente hasta 45 rpm al final.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s2d3",
+        dayName: "Miércoles",
+        tags: ["natacion", "eliptica"],
+        sessions: [
+          {
+            type: "water",
+            label: "Natación · Series más largas (50 m y 75 m)",
+            exercises: [
+              {
+                id: "s2d3n1",
+                title: "Calentamiento – 150 m crol continuo",
+                detail: "Ritmo suave. Piensa solo en la fluidez del movimiento. Respira de manera bilateral.",
+                meta: ["150 m", "Crol suave"]
+              },
+              {
+                id: "s2d3n2",
+                title: "Trabajo de brazada – 4 × 25 m solo brazos",
+                detail: "Coloca una pull-buoy entre las piernas (o cruza los pies) para que las piernas no participen. Trabaja solo con los brazos. Sentirás el esfuerzo del dorsal ancho. Descansa 30 seg entre cada largo.",
+                meta: ["4 × 25 m", "Solo brazos", "30 seg descanso"]
+              },
+              {
+                id: "s2d3n3",
+                title: "Series principales – 4 × 50 m con 40 seg descanso",
+                detail: "Ritmo moderado pero constante. El objetivo es que los últimos 50 m tengan la misma calidad técnica que los primeros. Si la técnica cae al final de cada largo, ve más despacio.",
+                meta: ["4 × 50 m", "40 seg descanso"]
+              },
+              {
+                id: "s2d3n4",
+                title: "Serie larga – 1 × 75 m continuo",
+                detail: "Por primera vez en el plan, una distancia más larga. Ve a un ritmo que sientas que puedes mantener hasta el final. Si necesitas parar, hazlo, pero toma nota para saber dónde falla la resistencia.",
+                meta: ["1 × 75 m", "Ritmo continuo"]
+              },
+              {
+                id: "s2d3n5",
+                title: "Vuelta a la calma – 50 m",
+                detail: "Nado muy lento. Concentra la atención en la exhalación dentro del agua.",
+                meta: ["50 m", "Muy suave"]
+              }
+            ]
+          },
+          {
+            type: "move",
+            label: "Elíptica post-natación · 30 min",
+            exercises: [
+              {
+                id: "s2d3e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2. Ajuste al movimiento terrestre.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s2d3e2",
+                title: "Fartlek aeróbico – 20 min",
+                detail: "Varía la cadencia cada 3 minutos de manera intuitiva: 3 min a cadencia media (65 rpm) + 3 min a cadencia alta (80 rpm) + 3 min a cadencia baja (55 rpm). Repite el ciclo. La resistencia se mantiene fija en nivel 4. Este trabajo entrena la capacidad de recuperarse mientras se sigue en movimiento.",
+                meta: ["20 min", "Fartlek", "Res. 4"]
+              },
+              {
+                id: "s2d3e3",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Resistencia 2. Cadencia mínima. Respira profundo.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s2d4",
+        dayName: "Jueves",
+        tags: ["eliptica"],
+        sessions: [
+          {
+            type: "move",
+            label: "Elíptica · 40 min · Zona 2 con picos de Z4",
+            exercises: [
+              {
+                id: "s2d4e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2–3. Prepara el sistema cardiovascular para los picos de intensidad que vienen.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s2d4e2",
+                title: "Zona 2 continua – 20 min",
+                detail: "Resistencia 5. Cadencia 65–70 rpm. Base aeróbica estable antes de los intervalos.",
+                meta: ["20 min", "Z2", "Res. 5"]
+              },
+              {
+                id: "s2d4e3",
+                title: "3 picos de intensidad Z4 – 3 × (2 min Z4 + 2 min Z1)",
+                detail: "Sube la resistencia a nivel 8–9 por 2 minutos (Z4: muy difícil hablar, frecuencia cardíaca en 80–90% FCM). Luego baja inmediatamente a resistencia 2 por 2 minutos (Z1: recuperación). Repite 3 veces. El propósito es exponer brevemente el sistema cardiorrespiratorio a trabajo de alta intensidad sin acumular fatiga excesiva.",
+                meta: ["3 × 2 min", "Z4 → Z1", "Res. 8–9"]
+              },
+              {
+                id: "s2d4e4",
+                title: "Enfriamiento – 3 min Zona 1",
+                detail: "Resistencia 2. Asegúrate de que el pulso baje antes de detenerte.",
+                meta: ["3 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s2d5",
+        dayName: "Viernes",
+        tags: ["natacion", "eliptica"],
+        sessions: [
+          {
+            type: "water",
+            label: "Natación · Técnica + series mixtas",
+            exercises: [
+              {
+                id: "s2d5n1",
+                title: "Calentamiento – 100 m continuo",
+                detail: "Crol suave, respira cada 3 brazadas.",
+                meta: ["100 m", "Suave"]
+              },
+              {
+                id: "s2d5n2",
+                title: "Drill de posición de cabeza – 4 × 25 m",
+                detail: "Nada mirando hacia el fondo (no hacia adelante). La cabeza debe estar alineada con la columna, las orejas entre los brazos. Esto mejora la hidrodinámica. Al respirar, solo gira la cabeza lo necesario. Descansa 30 seg.",
+                meta: ["4 × 25 m", "Técnica cabeza", "30 seg"]
+              },
+              {
+                id: "s2d5n3",
+                title: "Series combinadas – 3 × (50 m normal + 50 m lento)",
+                detail: "Nada 50 m a ritmo moderado, luego 50 m muy lento y consciente. El cambio de ritmo dentro de la misma serie entrena la eficiencia técnica bajo diferentes estados de fatiga. Descansa 45 seg entre cada bloque de 100 m.",
+                meta: ["3 × 100 m", "45 seg descanso"]
+              }
+            ]
+          },
+          {
+            type: "move",
+            label: "Elíptica post-natación · 30 min",
+            exercises: [
+              {
+                id: "s2d5e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s2d5e2",
+                title: "Zona 2 continua – 20 min",
+                detail: "Resistencia 4. Cadencia constante. Brazos activos en barras móviles. Sesión de consolidación aeróbica post-natación.",
+                meta: ["20 min", "Z2", "Res. 4"]
+              },
+              {
+                id: "s2d5e3",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Resistencia 2. Cierre tranquilo de la semana de entrenamiento intenso.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s2d6",
+        dayName: "Sábado",
+        tags: ["natacion", "eliptica"],
+        sessions: [
+          {
+            type: "water",
+            label: "Natación · Sesión matutina · Resistencia progresiva",
+            exercises: [
+              {
+                id: "s2d6n1",
+                title: "Calentamiento – 200 m",
+                detail: "100 m crol suave + 50 m pateo con tabla + 50 m crol. Activa cuerpo completo.",
+                meta: ["200 m", "Mixto"]
+              },
+              {
+                id: "s2d6n2",
+                title: "Pirámide en el agua – 25 + 50 + 75 + 50 + 25 m",
+                detail: "Nada cada distancia a ritmo moderado, con 40 segundos de descanso entre cada largo. La idea es que el ritmo sea similar en todas las distancias. Si sientes que el 75 m te exige demasiado, hazlo en 2 largos con 10 seg de pausa en el borde. Esta pirámide trabaja la capacidad de mantenimiento técnico en distancias crecientes.",
+                meta: ["Pirámide 225 m", "40 seg descanso"]
+              },
+              {
+                id: "s2d6n3",
+                title: "Vuelta a la calma – 100 m suave",
+                detail: "Crol tranquilo. Exhalación completa dentro del agua.",
+                meta: ["100 m", "Muy suave"]
+              }
+            ]
+          },
+          {
+            type: "move",
+            label: "Elíptica post-natación · 40 min · Sesión mixta",
+            exercises: [
+              {
+                id: "s2d6e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s2d6e2",
+                title: "Zona 2 hacia adelante – 20 min",
+                detail: "Resistencia 5. Cadencia 65–70 rpm. Brazos activos. Mayor exigencia que la semana anterior.",
+                meta: ["20 min", "Z2", "Res. 5"]
+              },
+              {
+                id: "s2d6e3",
+                title: "Pedaleo invertido – 10 min Zona 2",
+                detail: "Resistencia 3–4. Marcha atrás. Mantén cadencia de 60 rpm. Espalda recta.",
+                meta: ["10 min", "Z2", "Invertido"]
+              },
+              {
+                id: "s2d6e4",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Resistencia 2. Es el día de mayor volumen acumulado de la semana.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s2d7",
+        dayName: "Domingo",
+        tags: ["eliptica"],
+        sessions: [
+          {
+            type: "move",
+            label: "Elíptica · 30 min · Descarga",
+            exercises: [
+              {
+                id: "s2d7e1",
+                title: "Sesión completa de descarga activa – 30 min Zona 1",
+                detail: "Resistencia máxima nivel 3 durante toda la sesión. Cadencia entre 50 y 55 rpm. No hay calentamiento separado porque toda la sesión ES el calentamiento y la recuperación. Piensa en este tiempo como en activo movilidad: mueve el cuerpo sin generarle estrés. Escucha música o podcast y permítete disfrutar el movimiento sin objetivos de rendimiento.",
+                meta: ["30 min", "Z1", "Recuperación total"]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  // =========================================================
+  // SEMANA 3 – INTENSIFICACIÓN
+  // =========================================================
+  {
+    week: 3,
+    weekTitle: "Semana 3",
+    weekTag: "Intensificación · trabajo en zonas altas",
+    days: [
+      {
+        id: "s3d1",
+        dayName: "Lunes",
+        tags: ["eliptica", "hiit"],
+        sessions: [
+          {
+            type: "move",
+            label: "Elíptica · 30 min · HIIT 30/30",
+            exercises: [
+              {
+                id: "s3d1e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2–3. Cadencia progresiva hasta 65 rpm. Este calentamiento es particularmente importante antes de sesiones HIIT: no omitirlo.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s3d1e2",
+                title: "HIIT 30/30 – 10 rondas",
+                detail: "30 seg a resistencia 9–10, cadencia máxima sostenible (esfuerzo Z4: no puedes hablar). Seguido de 30 seg a resistencia 2, cadencia mínima (recuperación Z1). Repite 10 veces. Total del bloque: 10 minutos. Durante los 30 seg de esfuerzo, empuja con fuerza tanto brazos como piernas. Durante la recuperación, baja inmediatamente la resistencia y respira profundo.",
+                meta: ["10 rondas", "30 seg Z4 / 30 seg Z1", "10 min"]
+              },
+              {
+                id: "s3d1e3",
+                title: "Zona 2 de transición – 5 min",
+                detail: "Después del HIIT, mantén movimiento suave a resistencia 4 durante 5 min para que el lactato se metabolice.",
+                meta: ["5 min", "Z2"]
+              },
+              {
+                id: "s3d1e4",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Resistencia 2. Cadencia decreciente. Respira lentamente.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s3d2",
+        dayName: "Martes",
+        tags: ["eliptica"],
+        sessions: [
+          {
+            type: "move",
+            label: "Elíptica · 40 min · Recuperación aeróbica",
+            exercises: [
+              {
+                id: "s3d2e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s3d2e2",
+                title: "Zona 2 continua – 30 min con atención postural",
+                detail: "Resistencia 4–5. Cadencia 65 rpm. Esta sesión es la contrapartida del HIIT del lunes; el sistema cardiovascular necesita trabajo aeróbico suave para recuperarse completamente. Foco en la mecánica: espalda erguida, cadera estable, brazos activos y coordenados con las piernas. No dejes que el cuerpo compense con una postura encorvada.",
+                meta: ["30 min", "Z2", "Res. 4–5", "Recuperación activa"]
+              },
+              {
+                id: "s3d2e3",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Resistencia 2. Cierre con estiramiento de hombros y cadera.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s3d3",
+        dayName: "Miércoles",
+        tags: ["natacion", "eliptica"],
+        sessions: [
+          {
+            type: "water",
+            label: "Natación · Trabajo de pateo + series con pausa",
+            exercises: [
+              {
+                id: "s3d3n1",
+                title: "Calentamiento – 200 m continuo",
+                detail: "100 m crol + 50 m espalda + 50 m crol. Establece la respiración rítmica.",
+                meta: ["200 m", "Mixto suave"]
+              },
+              {
+                id: "s3d3n2",
+                title: "Pateo con tabla – 6 × 25 m",
+                detail: "Solo piernas. Esta semana aumenta la intensidad del pateo: intenta que haya más potencia en cada batida. Descansa 25 seg entre largos. Si las piernas se hunden, revisa que los tobillos estén relajados (sin apuntar los pies como en ballet; deja que caigan de forma natural).",
+                meta: ["6 × 25 m", "25 seg descanso", "Solo piernas"]
+              },
+              {
+                id: "s3d3n3",
+                title: "Series con pausa en deslizamiento – 4 × 50 m",
+                detail: "Cada 2 brazadas, pausa de 2 seg en posición de extensión (brazo adelante, cuerpo deslizando). Esto entrena el control del cuerpo en el agua y mejora la hidrodinámica. Descansa 45 seg. Es un ejercicio incómodo al principio; es normal.",
+                meta: ["4 × 50 m", "45 seg descanso", "Pausa técnica"]
+              },
+              {
+                id: "s3d3n4",
+                title: "Serie continua – 100 m a ritmo moderado",
+                detail: "Primera vez con una serie de 100 m. Ve a un ritmo que sientas sostenible durante todo el largo. Registra mentalmente cómo te sientes al llegar.",
+                meta: ["1 × 100 m", "Ritmo moderado"]
+              }
+            ]
+          },
+          {
+            type: "move",
+            label: "Elíptica post-natación · 35 min · Fartlek + Picos",
+            exercises: [
+              {
+                id: "s3d3e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s3d3e2",
+                title: "Fartlek de cadencia – 15 min",
+                detail: "Resistencia fija nivel 5. Alterna: 2 min a 60 rpm + 2 min a 80 rpm + 1 min a 90 rpm (sprint de cadencia). Repite el ciclo 3 veces. Los sprints de cadencia (90 rpm) generan alta demanda cardíaca sin aumentar la resistencia; trabajan la potencia de la zancada.",
+                meta: ["15 min", "Fartlek cadencia", "Res. 5"]
+              },
+              {
+                id: "s3d3e3",
+                title: "2 Picos Z4 – 2 × (90 seg Z4 + 90 seg Z1)",
+                detail: "Resistencia 9 durante 90 seg (esfuerzo máximo sostenible). Resistencia 2 durante 90 seg (recuperación). Dos repeticiones. Menor volumen que el lunes pero mayor intensidad por la fatiga acumulada de la natación.",
+                meta: ["2 × 90 seg", "Z4 / Z1"]
+              },
+              {
+                id: "s3d3e4",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Resistencia 2. Respira profundo al finalizar.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s3d4",
+        dayName: "Jueves",
+        tags: ["eliptica"],
+        sessions: [
+          {
+            type: "move",
+            label: "Elíptica · 40 min · Resistencia progresiva ascendente",
+            exercises: [
+              {
+                id: "s3d4e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2–3.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s3d4e2",
+                title: "Escalera de resistencia – 6 bloques de 5 min",
+                detail: "Sube un nivel de resistencia cada 5 minutos: 5 min a Res. 4 (Z2) → 5 min a Res. 5 (Z2 alta) → 5 min a Res. 6 (Z2/Z3) → 5 min a Res. 7 (Z3) → 5 min a Res. 8 (Z3 alta) → 5 min a Res. 9 (Z3/Z4). La cadencia se mantiene en 65 rpm durante todo el bloque. El último tramo (Res. 9) debe sentirse duro pero no máximo. Esta progresión entrena la capacidad de mantener la técnica bajo fatiga creciente.",
+                meta: ["6 × 5 min", "Res. 4→9", "Z2→Z4"]
+              },
+              {
+                id: "s3d4e3",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Baja inmediatamente a resistencia 2. Regula el pulso antes de detenerte.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s3d5",
+        dayName: "Viernes",
+        tags: ["natacion", "eliptica"],
+        sessions: [
+          {
+            type: "water",
+            label: "Natación · Series de velocidad controlada",
+            exercises: [
+              {
+                id: "s3d5n1",
+                title: "Calentamiento – 150 m",
+                detail: "50 m espalda + 100 m crol suave.",
+                meta: ["150 m", "Mixto"]
+              },
+              {
+                id: "s3d5n2",
+                title: "Series de velocidad corta – 6 × 25 m al 80–85%",
+                detail: "Nada cada largo a un ritmo más rápido que lo habitual, pero sin llegar al máximo. Descansa 45 seg entre cada largo. El objetivo es que los 6 largos tengan un tiempo similar (consistencia de pace). Si el último es mucho más lento que el primero, estás saliendo demasiado rápido.",
+                meta: ["6 × 25 m", "45 seg descanso", "80–85%"]
+              },
+              {
+                id: "s3d5n3",
+                title: "Series largas – 2 × 100 m con 60 seg descanso",
+                detail: "Ritmo moderado constante. Mantén la respiración bilateral. El primer 100 m establece el ritmo; el segundo debe tener la misma calidad técnica.",
+                meta: ["2 × 100 m", "60 seg descanso"]
+              },
+              {
+                id: "s3d5n4",
+                title: "Enfriamiento – 50 m muy suave",
+                detail: "Crol tranquilo, exhalación consciente.",
+                meta: ["50 m"]
+              }
+            ]
+          },
+          {
+            type: "move",
+            label: "Elíptica post-natación · 35 min",
+            exercises: [
+              {
+                id: "s3d5e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s3d5e2",
+                title: "Zona 2 hacia adelante – 15 min",
+                detail: "Resistencia 4–5. Cadencia 65 rpm. Brazos activos.",
+                meta: ["15 min", "Z2"]
+              },
+              {
+                id: "s3d5e3",
+                title: "Zona 2 invertido – 10 min",
+                detail: "Resistencia 4. Marcha atrás. Cadencia 60 rpm.",
+                meta: ["10 min", "Z2", "Invertido"]
+              },
+              {
+                id: "s3d5e4",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Resistencia 2. Cierre tranquilo del viernes.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s3d6",
+        dayName: "Sábado",
+        tags: ["natacion", "eliptica", "hiit"],
+        sessions: [
+          {
+            type: "water",
+            label: "Natación · Sesión de mayor volumen",
+            exercises: [
+              {
+                id: "s3d6n1",
+                title: "Calentamiento – 200 m mixto",
+                detail: "100 m crol + 50 m pateo tabla + 50 m crol.",
+                meta: ["200 m"]
+              },
+              {
+                id: "s3d6n2",
+                title: "Bloques de resistencia – 3 × (75 m + 25 m técnico)",
+                detail: "Nada 75 m a ritmo moderado sostenido, luego 25 m muy despacio con enfoque técnico (elige un aspecto: entrada de mano, rotación, pateo). Descansa 50 seg entre bloques. En total: 300 m de trabajo principal.",
+                meta: ["3 × 100 m", "50 seg descanso"]
+              },
+              {
+                id: "s3d6n3",
+                title: "Vuelta a la calma – 100 m",
+                detail: "Crol tranquilo o espalda. Disfruta el movimiento.",
+                meta: ["100 m", "Suave"]
+              }
+            ]
+          },
+          {
+            type: "move",
+            label: "Elíptica post-natación · 40 min · Tabata + Z2",
+            exercises: [
+              {
+                id: "s3d6e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s3d6e2",
+                title: "Zona 2 continua – 15 min",
+                detail: "Resistencia 5. Cadencia 65 rpm. Base antes del Tabata.",
+                meta: ["15 min", "Z2"]
+              },
+              {
+                id: "s3d6e3",
+                title: "Pedaleo invertido – 10 min Zona 2",
+                detail: "Resistencia 4. Marcha atrás. Transición hacia el Tabata.",
+                meta: ["10 min", "Z2", "Invertido"]
+              },
+              {
+                id: "s3d6e4",
+                title: "Tabata final – 4 rondas de (20 seg máximo / 10 seg descanso)",
+                detail: "Sube a resistencia 10. Durante los 20 seg empuja al máximo de tu capacidad (cadencia máxima). Los 10 seg de descanso son en la máquina, quieto. Repite 4 veces. Total: 2 minutos de trabajo real. Este protocolo, desarrollado originalmente por el investigador Izumi Tabata, genera adaptaciones simultáneas en los sistemas aeróbico y anaeróbico.",
+                meta: ["4 rondas", "Tabata", "20/10 seg"]
+              },
+              {
+                id: "s3d6e5",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Resistencia 2. Este es el día de mayor carga total de todo el plan. El enfriamiento es indispensable.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s3d7",
+        dayName: "Domingo",
+        tags: ["eliptica"],
+        sessions: [
+          {
+            type: "move",
+            label: "Elíptica · 30 min · Descarga profunda",
+            exercises: [
+              {
+                id: "s3d7e1",
+                title: "Sesión de descarga y movilidad activa – 30 min",
+                detail: "Resistencia nivel 2 durante toda la sesión. Cadencia entre 45 y 55 rpm. Sin objetivos de intensidad. Después de la semana más exigente del mesociclo, esta sesión tiene como propósito promover la circulación en los músculos trabajados y acelerar la recuperación. Al finalizar, realiza estiramiento de 2 minutos por grupo: cuádriceps, isquiotibiales, glúteos, pectorales y hombros.",
+                meta: ["30 min", "Z1", "Res. 2", "Recuperación"]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  // =========================================================
+  // SEMANA 4 – DESCARGA Y CONSOLIDACIÓN
+  // =========================================================
+  {
+    week: 4,
+    weekTitle: "Semana 4",
+    weekTag: "Descarga y consolidación · volumen reducido",
+    days: [
+      {
+        id: "s4d1",
+        dayName: "Lunes",
+        tags: ["eliptica"],
+        sessions: [
+          {
+            type: "move",
+            label: "Elíptica · 25 min · Zona 2 libre",
+            exercises: [
+              {
+                id: "s4d1e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s4d1e2",
+                title: "Zona 2 continua – 15 min sin intervalos",
+                detail: "Resistencia 4. Cadencia estable. No hay cambios de intensidad esta semana. El objetivo es recuperar completamente las adaptaciones de la semana 3 mientras se mantiene el movimiento. La sensación debería ser claramente más fácil que la semana pasada; si no es así, baja la resistencia.",
+                meta: ["15 min", "Z2", "Res. 4"]
+              },
+              {
+                id: "s4d1e3",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Resistencia 2.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s4d2",
+        dayName: "Martes",
+        tags: ["eliptica"],
+        sessions: [
+          {
+            type: "move",
+            label: "Elíptica · 30 min · Pedaleo mixto Z1–Z2",
+            exercises: [
+              {
+                id: "s4d2e1",
+                title: "Pedaleo hacia adelante – 15 min Zona 1–2",
+                detail: "Resistencia 3–4. Cadencia suave, 60 rpm. Zona entre 1 y 2 sin cruzar a Z3 en ningún momento. Brazos activos pero sin exigirlos.",
+                meta: ["15 min", "Z1–Z2", "Res. 3–4"]
+              },
+              {
+                id: "s4d2e2",
+                title: "Pedaleo invertido – 15 min Zona 1–2",
+                detail: "Resistencia 3. Marcha atrás. Mismo principio: tranquilo y sin superar Z2. Esta semana el pedaleo invertido sirve como movilidad activa de la cadena posterior.",
+                meta: ["15 min", "Z1–Z2", "Invertido"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s4d3",
+        dayName: "Miércoles",
+        tags: ["natacion", "eliptica"],
+        sessions: [
+          {
+            type: "water",
+            label: "Natación · Sesión técnica libre",
+            exercises: [
+              {
+                id: "s4d3n1",
+                title: "Nado libre a ritmo propio – 300–400 m totales",
+                detail: "Sin series cronometradas ni presión de distancia. Nada durante 20–25 minutos eligiendo el ritmo, la respiración y el estilo que prefieras. El objetivo es revisitar todo lo aprendido (posición de cabeza, rotación, pateo, brazada larga) de manera espontánea. Permítete disfrutar el movimiento en el agua.",
+                meta: ["~300–400 m", "Sin estructura", "Técnica libre"]
+              }
+            ]
+          },
+          {
+            type: "move",
+            label: "Elíptica post-natación · 25 min",
+            exercises: [
+              {
+                id: "s4d3e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s4d3e2",
+                title: "Zona 2 continua – 15 min",
+                detail: "Resistencia 4. Sin intervalos. Sesión de mantenimiento aeróbico.",
+                meta: ["15 min", "Z2"]
+              },
+              {
+                id: "s4d3e3",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Resistencia 2.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s4d4",
+        dayName: "Jueves",
+        tags: ["eliptica"],
+        sessions: [
+          {
+            type: "move",
+            label: "Elíptica · 30 min · Ritmo intuitivo",
+            exercises: [
+              {
+                id: "s4d4e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s4d4e2",
+                title: "Sesión intuitiva – 20 min entre Z1 y Z2",
+                detail: "El practicante elige la resistencia según cómo se siente. El único límite es no superar Z2 (si el corazón sube demasiado o ya no puedes sostener una conversación, baja). Esta sesión mide la percepción subjetiva del esfuerzo después de 3 semanas de entrenamiento. Si la resistencia que usabas en Z2 la semana 1 ahora se siente como Z1, es una señal clara de adaptación cardiovascular.",
+                meta: ["20 min", "Z1–Z2", "Intuitivo"]
+              },
+              {
+                id: "s4d4e3",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Resistencia 2.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s4d5",
+        dayName: "Viernes",
+        tags: ["natacion", "eliptica"],
+        sessions: [
+          {
+            type: "water",
+            label: "Natación · Sesión de medición personal",
+            exercises: [
+              {
+                id: "s4d5n1",
+                title: "Calentamiento – 150 m suave",
+                detail: "Crol tranquilo.",
+                meta: ["150 m", "Suave"]
+              },
+              {
+                id: "s4d5n2",
+                title: "Prueba de distancia máxima continua",
+                detail: "Nada el máximo de metros que puedas sin parar, a un ritmo que sientas sostenible. No es una prueba de velocidad. Registra la distancia alcanzada. En el mes 1, lo habitual para un principiante es entre 200 y 400 m continuos. Esta cifra será tu punto de referencia para el siguiente mesociclo.",
+                meta: ["Distancia libre", "Ritmo sostenible", "Registro"]
+              },
+              {
+                id: "s4d5n3",
+                title: "Vuelta a la calma – 100 m",
+                detail: "Crol o espalda muy suave.",
+                meta: ["100 m", "Suave"]
+              }
+            ]
+          },
+          {
+            type: "move",
+            label: "Elíptica post-natación · 25 min",
+            exercises: [
+              {
+                id: "s4d5e1",
+                title: "Calentamiento – 5 min Zona 1",
+                detail: "Resistencia 2.",
+                meta: ["5 min", "Z1"]
+              },
+              {
+                id: "s4d5e2",
+                title: "Zona 2 suave – 15 min",
+                detail: "Resistencia 3–4. Sesión de cierre de semana.",
+                meta: ["15 min", "Z2 suave"]
+              },
+              {
+                id: "s4d5e3",
+                title: "Enfriamiento – 5 min Zona 1",
+                detail: "Resistencia 2.",
+                meta: ["5 min", "Z1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s4d6",
+        dayName: "Sábado",
+        tags: ["natacion"],
+        sessions: [
+          {
+            type: "water",
+            label: "Natación · Solo natación · Disfrute y cierre del mesociclo",
+            exercises: [
+              {
+                id: "s4d6n1",
+                title: "Sesión libre – 25–30 min en el agua",
+                detail: "Sin estructura de series. Nada durante 25 a 30 minutos al ritmo que elijas. Si quieres trabajar técnica, trabájala. Si quieres nadar continuo, hazlo. Este día el objetivo es reforzar la sensación positiva hacia el entrenamiento y la confianza dentro del agua al finalizar el primer mes de proceso.",
+                meta: ["25–30 min", "Libre", "Cierre"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "s4d7",
+        dayName: "Domingo",
+        tags: ["eliptica"],
+        sessions: [
+          {
+            type: "move",
+            label: "Elíptica · 25 min · Cierre del mesociclo",
+            exercises: [
+              {
+                id: "s4d7e1",
+                title: "Sesión de cierre – 25 min Zona 1",
+                detail: "Resistencia 2. Cadencia libre entre 45 y 60 rpm según cómo te sientas. Es el último día del mesociclo. Esta sesión simboliza el cierre del primer bloque de entrenamiento y el punto de partida del siguiente. Al finalizar, dedica 5 minutos a estiramiento completo: piernas, cadera, columna, hombros. Toma nota mental de cómo se siente el cuerpo en comparación con el primer domingo del mes.",
+                meta: ["25 min", "Z1", "Cierre Mes 1"]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+];
+
+// ============================================================
+// ESTADO
+// ============================================================
+const STORAGE_KEY = 'training_plan_v1';
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+}
+
+function saveState(state) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+}
+
+let state = loadState();
+
+// ============================================================
+// RENDER
+// ============================================================
+function tagHTML(t) {
+  const map = {
+    natacion: ['tag-natacion', 'Natación'],
+    eliptica: ['tag-eliptica', 'Elíptica'],
+    hiit: ['tag-hiit', 'HIIT'],
+    descanso: ['tag-descanso', 'Descanso']
+  };
+  const [cls, label] = map[t] || ['tag-descanso', t];
+  return `<span class="tag ${cls}">${label}</span>`;
+}
+
+function zoneClass(z) {
+  if (!z) return '';
+  const m = z.match(/Z(\d)/);
+  if (!m) return '';
+  return ['', 'z1', 'z2', 'z3', 'z4'][+m[1]] || '';
+}
+
+function exHTML(ex) {
+  const done = state[ex.id] ? ' done' : '';
+  const check = state[ex.id] ? '✓' : '';
+  const pills = (ex.meta || []).map(m => `<span class="ex-pill ${zoneClass(m)}">${m}</span>`).join('');
+  return `
+    <li class="exercise-item${done}" onclick="toggleEx('${ex.id}')" data-exid="${ex.id}">
+      <div class="ex-check">${check}</div>
+      <div class="ex-body">
+        <div class="ex-title">${ex.title}</div>
+        <div class="ex-detail">${ex.detail}</div>
+        <div class="ex-meta">${pills}</div>
+      </div>
+    </li>`;
+}
+
+function sessionHTML(session) {
+  return `
+    <div class="session-block">
+      <div class="session-label ${session.type}">${session.label}</div>
+      <ul class="exercise-list">
+        ${session.exercises.map(exHTML).join('')}
+      </ul>
+    </div>`;
+}
+
+function dayHTML(day, weekIdx, dayIdx) {
+  const allExIds = day.sessions.flatMap(s => s.exercises.map(e => e.id));
+  const doneCnt = allExIds.filter(id => state[id]).length;
+  const dayDone = doneCnt === allExIds.length && allExIds.length > 0;
+  const openClass = '';
+
+  return `
+    <div class="day-card${dayDone ? ' completed' : ''}${openClass}" id="card-${day.id}">
+      <div class="day-header" onclick="toggleDay('${day.id}')">
+        <span class="day-num">S${weekIdx+1} · D${dayIdx+1}</span>
+        <span class="day-name">${day.dayName}</span>
+        <div class="day-tags">${day.tags.map(tagHTML).join('')}</div>
+        <span class="day-chevron">⌄</span>
+      </div>
+      <div class="day-content">
+        ${day.sessions.map(sessionHTML).join('')}
+        <button class="mark-day-btn" onclick="markDay('${day.id}', event)">
+          ${dayDone ? '✓ Día completado' : '○ Marcar día como completado'}
+        </button>
+      </div>
+    </div>`;
+}
+
+function weekHTML(week, idx) {
+  const allExIds = week.days.flatMap(d => d.sessions.flatMap(s => s.exercises.map(e => e.id)));
+  const doneCnt = allExIds.filter(id => state[id]).length;
+  const pct = allExIds.length ? Math.round(doneCnt / allExIds.length * 100) : 0;
+
+  return `
+    <div class="week-block">
+      <div class="week-header">
+        <span class="week-title">${week.weekTitle}</span>
+        <span class="week-tag">${week.weekTag}</span>
+        <span class="week-progress-inline"><strong>${pct}%</strong> completado</span>
+      </div>
+      ${week.days.map((d, di) => dayHTML(d, idx, di)).join('')}
+    </div>`;
+}
+
+function render() {
+  document.getElementById('plan-container').innerHTML = PLAN.map((w, i) => weekHTML(w, i)).join('');
+  updateStats();
+}
+
+// ============================================================
+// INTERACCIÓN
+// ============================================================
+function toggleDay(dayId) {
+  const card = document.getElementById('card-' + dayId);
+  card.classList.toggle('open');
+}
+
+function toggleEx(exId) {
+  state[exId] = !state[exId];
+  saveState(state);
+
+  const item = document.querySelector(`[data-exid="${exId}"]`);
+  if (!item) return;
+  item.classList.toggle('done', state[exId]);
+  item.querySelector('.ex-check').textContent = state[exId] ? '✓' : '';
+
+  // Update parent day card completion
+  updateDayCard(item);
+  updateStats();
+  updateWeekProgress();
+}
+
+function updateDayCard(exItem) {
+  const dayContent = exItem.closest('.day-content');
+  if (!dayContent) return;
+  const card = dayContent.closest('.day-card');
+  const allItems = dayContent.querySelectorAll('.exercise-item');
+  const doneItems = dayContent.querySelectorAll('.exercise-item.done');
+  const allDone = allItems.length > 0 && allItems.length === doneItems.length;
+  card.classList.toggle('completed', allDone);
+  const btn = dayContent.querySelector('.mark-day-btn');
+  if (btn) btn.textContent = allDone ? '✓ Día completado' : '○ Marcar día como completado';
+}
+
+function markDay(dayId, e) {
+  e.stopPropagation();
+  const week = PLAN.flatMap(w => w.days).find(d => d.id === dayId);
+  if (!week) return;
+  const allExIds = week.sessions.flatMap(s => s.exercises.map(ex => ex.id));
+  const allDone = allExIds.every(id => state[id]);
+  allExIds.forEach(id => { state[id] = !allDone; });
+  saveState(state);
+  render();
+}
+
+function updateStats() {
+  const allExIds = PLAN.flatMap(w => w.days.flatMap(d => d.sessions.flatMap(s => s.exercises.map(e => e.id))));
+  const allDays = PLAN.flatMap(w => w.days);
+  const doneDays = allDays.filter(d => {
+    const ids = d.sessions.flatMap(s => s.exercises.map(e => e.id));
+    return ids.length > 0 && ids.every(id => state[id]);
+  }).length;
+  const doneEx = allExIds.filter(id => state[id]).length;
+  const pct = allExIds.length ? Math.round(doneEx / allExIds.length * 100) : 0;
+
+  document.getElementById('days-done').innerHTML = `${doneDays} <span>/ 28</span>`;
+  document.getElementById('ex-done').innerHTML = `${doneEx} <span>/ <span id="ex-total">${allExIds.length}</span></span>`;
+  document.getElementById('pct-done').innerHTML = `${pct}<span>%</span>`;
+  document.getElementById('main-bar').style.width = pct + '%';
+  document.getElementById('pct-label').textContent = pct + '%';
+}
+
+function updateWeekProgress() {
+  PLAN.forEach((week, idx) => {
+    const allExIds = week.days.flatMap(d => d.sessions.flatMap(s => s.exercises.map(e => e.id)));
+    const doneCnt = allExIds.filter(id => state[id]).length;
+    const pct = allExIds.length ? Math.round(doneCnt / allExIds.length * 100) : 0;
+    const el = document.querySelector(`.week-block:nth-child(${idx+1}) .week-progress-inline strong`);
+    if (el) el.textContent = pct + '%';
+  });
+}
+
+function resetAll() {
+  if (!confirm('¿Reiniciar todo el progreso? Esta acción no se puede deshacer.')) return;
+  state = {};
+  saveState(state);
+  render();
+}
+
+// Init
+render();
+</script>
+</body>
+</html>
