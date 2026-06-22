@@ -7,165 +7,121 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Epilogue:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0e14;
-    --surface: #111620;
-    --surface2: #171d28;
-    --border: #1e2736;
-    --accent-water: #38bdf8;
-    --accent-move: #a78bfa;
-    --accent-rest: #34d399;
-    --accent-warn: #fb923c;
-    --accent-foot: #f472b6;
-    --text: #e2e8f0;
-    --text-muted: #64748b;
-    --text-dim: #334155;
-    --done-bg: #0f2d1a;
-    --done-border: #166534;
+    --bg:#0a0e14;--surface:#111620;--surface2:#171d28;--border:#1e2736;
+    --accent-water:#38bdf8;--accent-move:#a78bfa;--accent-rest:#34d399;
+    --accent-warn:#fb923c;--accent-foot:#f472b6;
+    --text:#e2e8f0;--text-muted:#64748b;--text-dim:#334155;
+    --done-bg:#0f2d1a;--done-border:#166534;
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--bg); color:var(--text); font-family:'Epilogue',sans-serif; font-weight:300; min-height:100vh; }
-  body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(56,189,248,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,0.03) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; z-index:0; }
-  .wrapper { position:relative; z-index:1; max-width:860px; margin:0 auto; padding:36px 16px 80px; }
-
-  /* HEADER */
-  .header-label { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.2em; color:var(--accent-water); text-transform:uppercase; margin-bottom:10px; }
-  h1 { font-family:'Syne',sans-serif; font-size:clamp(26px,5vw,44px); font-weight:800; line-height:1.05; letter-spacing:-.02em; margin-bottom:20px; }
-  h1 span { color:var(--accent-water); }
-
-  /* GLOBAL STATS */
-  .global-progress { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px 24px; margin-bottom:32px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
-  .stat-item label { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.15em; color:var(--text-muted); text-transform:uppercase; display:block; margin-bottom:5px; }
-  .stat-num { font-family:'Syne',sans-serif; font-size:26px; font-weight:700; }
-  .stat-num span { font-size:13px; color:var(--text-muted); font-weight:400; }
-  .progress-bar-wrap { grid-column:1/-1; margin-top:8px; }
-  .progress-bar-wrap label { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.15em; color:var(--text-muted); text-transform:uppercase; display:flex; justify-content:space-between; margin-bottom:7px; }
-  .bar-track { height:5px; background:var(--border); border-radius:99px; overflow:hidden; }
-  .bar-fill { height:100%; background:linear-gradient(90deg,var(--accent-water),var(--accent-move)); border-radius:99px; transition:width .6s cubic-bezier(.34,1.56,.64,1); width:0%; }
-
-  /* LEGEND */
-  .legend { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:28px; }
-  .legend-item { display:flex; align-items:center; gap:7px; font-family:'DM Mono',monospace; font-size:11px; color:var(--text-muted); }
-  .legend-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
-
-  /* MONTH SELECTOR */
-  .month-nav { display:flex; align-items:center; gap:12px; margin-bottom:28px; }
-  .month-btn { background:var(--surface); border:1px solid var(--border); color:var(--text-muted); width:32px; height:32px; border-radius:8px; font-size:16px; cursor:pointer; transition:all .2s; display:flex; align-items:center; justify-content:center; }
-  .month-btn:hover { border-color:var(--accent-water); color:var(--accent-water); }
-  .month-title { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; }
-  .month-add { margin-left:auto; background:transparent; border:1px dashed var(--border); color:var(--text-muted); padding:6px 14px; border-radius:8px; font-family:'DM Mono',monospace; font-size:11px; cursor:pointer; transition:all .2s; }
-  .month-add:hover { border-color:var(--accent-rest); color:var(--accent-rest); }
-
-  /* WEEK */
-  .week-block { margin-bottom:32px; }
-  .week-header { display:flex; align-items:center; gap:12px; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border); }
-  .week-title { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; }
-  .week-pct { margin-left:auto; font-family:'DM Mono',monospace; font-size:11px; color:var(--text-muted); }
-  .week-pct strong { color:var(--accent-water); font-size:13px; }
-
-  /* DAY CARD */
-  .day-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; margin-bottom:10px; overflow:hidden; transition:border-color .2s; }
-  .day-card:hover { border-color:#2a3a52; }
-  .day-card.completed { border-color:var(--done-border); background:var(--done-bg); }
-  .day-header { display:flex; align-items:center; padding:14px 18px; gap:12px; cursor:pointer; user-select:none; }
-  .day-num { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-dim); width:52px; flex-shrink:0; }
-  .day-name { font-family:'Syne',sans-serif; font-size:14px; font-weight:700; flex:1; }
-  .day-tags { display:flex; gap:5px; flex-wrap:wrap; }
-  .tag { font-family:'DM Mono',monospace; font-size:10px; padding:2px 7px; border-radius:99px; border:1px solid; }
-  .tag-natacion { color:var(--accent-water); border-color:rgba(56,189,248,.3); background:rgba(56,189,248,.06); }
-  .tag-eliptica { color:var(--accent-move); border-color:rgba(167,139,250,.3); background:rgba(167,139,250,.06); }
-  .tag-descanso { color:var(--accent-rest); border-color:rgba(52,211,153,.3); background:rgba(52,211,153,.06); }
-  .tag-hiit { color:var(--accent-warn); border-color:rgba(251,146,60,.3); background:rgba(251,146,60,.06); }
-  .tag-futbol { color:var(--accent-foot); border-color:rgba(244,114,182,.3); background:rgba(244,114,182,.06); }
-  .day-chevron { color:var(--text-muted); transition:transform .25s; font-size:16px; }
-  .day-card.open .day-chevron { transform:rotate(180deg); }
-
-  /* DAY CONTENT */
-  .day-content { display:none; padding:0 18px 18px; border-top:1px solid var(--border); }
-  .day-card.open .day-content { display:block; }
-
-  /* SESSION BLOCK */
-  .session-block { padding-top:16px; }
-  .session-label { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.15em; text-transform:uppercase; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
-  .session-label::after { content:''; flex:1; height:1px; background:var(--border); }
-  .session-label.water { color:var(--accent-water); }
-  .session-label.move { color:var(--accent-move); }
-  .session-label.foot { color:var(--accent-foot); }
-
-  /* TOGGLE SWITCH for Thursday / weekend */
-  .toggle-wrap { display:flex; align-items:center; gap:10px; padding:12px 14px; background:var(--surface2); border-radius:10px; margin-bottom:12px; }
-  .toggle-label { font-size:12px; color:var(--text-muted); flex:1; font-family:'DM Mono',monospace; letter-spacing:.05em; }
-  .toggle-switch { position:relative; width:40px; height:22px; flex-shrink:0; }
-  .toggle-switch input { opacity:0; width:0; height:0; position:absolute; }
-  .toggle-slider { position:absolute; inset:0; background:var(--border); border-radius:99px; cursor:pointer; transition:.2s; }
-  .toggle-slider::before { content:''; position:absolute; width:16px; height:16px; left:3px; bottom:3px; background:var(--text-muted); border-radius:50%; transition:.2s; }
-  .toggle-switch input:checked + .toggle-slider { background:rgba(167,139,250,.3); border:1px solid var(--accent-move); }
-  .toggle-switch input:checked + .toggle-slider::before { transform:translateX(18px); background:var(--accent-move); }
-
-  /* PANELS */
-  .panel { display:none; }
-  .panel.active { display:block; }
-
-  /* SWIM LOG */
-  .swim-log { background:var(--surface2); border-radius:10px; padding:14px; }
-  .swim-log-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
-  .log-field label { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.1em; color:var(--text-muted); text-transform:uppercase; display:block; margin-bottom:5px; }
-  .log-field input, .log-field textarea { width:100%; background:var(--border); border:1px solid transparent; border-radius:7px; padding:8px 10px; color:var(--text); font-family:'Epilogue',sans-serif; font-size:13px; outline:none; transition:border-color .2s; }
-  .log-field input:focus, .log-field textarea:focus { border-color:var(--accent-water); }
-  .log-field textarea { resize:vertical; min-height:56px; }
-  .log-field.full { grid-column:1/-1; }
-  .save-log-btn { width:100%; padding:9px; border-radius:8px; border:1px solid var(--accent-water); background:rgba(56,189,248,.08); color:var(--accent-water); font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.1em; cursor:pointer; transition:all .2s; }
-  .save-log-btn:hover { background:rgba(56,189,248,.15); }
-  .log-saved { display:none; font-family:'DM Mono',monospace; font-size:11px; color:var(--accent-rest); text-align:center; margin-top:8px; }
-
-  /* FOOTBALL LOG */
-  .foot-log { background:var(--surface2); border-radius:10px; padding:14px; }
-  .foot-log-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
-
-  /* EXERCISE LIST */
-  .exercise-list { list-style:none; display:flex; flex-direction:column; gap:7px; }
-  .exercise-item { display:flex; align-items:flex-start; gap:10px; padding:11px 13px; background:var(--surface2); border-radius:10px; border:1px solid transparent; cursor:pointer; transition:all .2s; }
-  .exercise-item:hover { border-color:var(--border); }
-  .exercise-item.done { background:rgba(74,222,128,.05); border-color:rgba(74,222,128,.15); }
-  .exercise-item.done .ex-title { text-decoration:line-through; color:var(--text-muted); }
-  .ex-check { width:17px; height:17px; border-radius:5px; border:1.5px solid var(--text-dim); flex-shrink:0; margin-top:2px; display:flex; align-items:center; justify-content:center; transition:all .2s; font-size:10px; }
-  .exercise-item.done .ex-check { background:var(--accent-rest); border-color:var(--accent-rest); color:#0a0e14; }
-  .ex-body { flex:1; }
-  .ex-title { font-size:13px; font-weight:500; color:var(--text); margin-bottom:3px; line-height:1.4; }
-  .ex-detail { font-size:12px; color:var(--text-muted); line-height:1.5; }
-  .ex-meta { display:flex; gap:8px; margin-top:5px; flex-wrap:wrap; }
-  .ex-pill { font-family:'DM Mono',monospace; font-size:10px; padding:2px 7px; border-radius:99px; background:var(--border); color:var(--text-muted); }
-  .ex-pill.z1 { background:rgba(52,211,153,.1); color:var(--accent-rest); }
-  .ex-pill.z2 { background:rgba(56,189,248,.1); color:var(--accent-water); }
-  .ex-pill.z3 { background:rgba(251,146,60,.1); color:var(--accent-warn); }
-  .ex-pill.z4 { background:rgba(239,68,68,.1); color:#f87171; }
-
-  /* OPTIONAL BADGE */
-  .optional-badge { font-family:'DM Mono',monospace; font-size:10px; color:var(--accent-rest); border:1px solid rgba(52,211,153,.3); padding:2px 8px; border-radius:99px; margin-left:auto; }
-
-  /* INTENSITY BADGE */
-  .intensity-badge { font-family:'DM Mono',monospace; font-size:10px; padding:3px 9px; border-radius:99px; margin-left:8px; }
-  .int-light { background:rgba(52,211,153,.1); color:var(--accent-rest); border:1px solid rgba(52,211,153,.2); }
-  .int-mod { background:rgba(56,189,248,.1); color:var(--accent-water); border:1px solid rgba(56,189,248,.2); }
-  .int-hard { background:rgba(251,146,60,.1); color:var(--accent-warn); border:1px solid rgba(251,146,60,.2); }
-  .int-hiit { background:rgba(239,68,68,.1); color:#f87171; border:1px solid rgba(239,68,68,.2); }
-
-  /* MARK DAY BTN */
-  .mark-day-btn { margin-top:14px; width:100%; padding:9px; border-radius:9px; border:1px dashed var(--border); background:transparent; color:var(--text-muted); font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.1em; cursor:pointer; transition:all .2s; }
-  .mark-day-btn:hover { border-color:var(--accent-rest); color:var(--accent-rest); }
-  .day-card.completed .mark-day-btn { border-color:rgba(74,222,128,.3); color:var(--accent-rest); background:rgba(74,222,128,.05); }
-
-  /* REST DAY */
-  .rest-day-msg { padding:16px 0; text-align:center; font-size:13px; color:var(--text-muted); }
-
-  /* RESET */
-  .reset-btn { display:block; margin:36px auto 0; padding:9px 26px; border-radius:99px; border:1px solid var(--border); background:transparent; color:var(--text-muted); font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.1em; cursor:pointer; transition:all .2s; }
-  .reset-btn:hover { border-color:#f87171; color:#f87171; }
-
-  @media(max-width:520px) {
-    .global-progress { grid-template-columns:1fr 1fr; }
-    .progress-bar-wrap { grid-column:1/-1; }
-    .swim-log-grid, .foot-log-grid { grid-template-columns:1fr; }
-  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Epilogue',sans-serif;font-weight:300;min-height:100vh;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(56,189,248,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+  .wrapper{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:36px 16px 80px;}
+  .header-label{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--accent-water);text-transform:uppercase;margin-bottom:10px;}
+  h1{font-family:'Syne',sans-serif;font-size:clamp(26px,5vw,44px);font-weight:800;line-height:1.05;letter-spacing:-.02em;margin-bottom:20px;}
+  h1 span{color:var(--accent-water);}
+  .global-progress{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 24px;margin-bottom:32px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
+  .stat-item label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--text-muted);text-transform:uppercase;display:block;margin-bottom:5px;}
+  .stat-num{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;}
+  .stat-num span{font-size:13px;color:var(--text-muted);font-weight:400;}
+  .progress-bar-wrap{grid-column:1/-1;margin-top:8px;}
+  .progress-bar-wrap label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--text-muted);text-transform:uppercase;display:flex;justify-content:space-between;margin-bottom:7px;}
+  .bar-track{height:5px;background:var(--border);border-radius:99px;overflow:hidden;}
+  .bar-fill{height:100%;background:linear-gradient(90deg,var(--accent-water),var(--accent-move));border-radius:99px;transition:width .6s cubic-bezier(.34,1.56,.64,1);width:0%;}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:28px;}
+  .legend-item{display:flex;align-items:center;gap:7px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);}
+  .legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .month-nav{display:flex;align-items:center;gap:12px;margin-bottom:28px;}
+  .month-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-muted);width:32px;height:32px;border-radius:8px;font-size:16px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+  .month-btn:hover{border-color:var(--accent-water);color:var(--accent-water);}
+  .month-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;}
+  .month-add{margin-left:auto;background:transparent;border:1px dashed var(--border);color:var(--text-muted);padding:6px 14px;border-radius:8px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s;}
+  .month-add:hover{border-color:var(--accent-rest);color:var(--accent-rest);}
+  .week-block{margin-bottom:32px;}
+  .week-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+  .week-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;}
+  .week-pct{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);}
+  .week-pct strong{color:var(--accent-water);font-size:13px;}
+  .day-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;transition:border-color .2s;}
+  .day-card:hover{border-color:#2a3a52;}
+  .day-card.completed{border-color:var(--done-border);background:var(--done-bg);}
+  .day-header{display:flex;align-items:center;padding:14px 18px;gap:12px;cursor:pointer;user-select:none;}
+  .day-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim);width:52px;flex-shrink:0;}
+  .day-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;flex:1;}
+  .day-tags{display:flex;gap:5px;flex-wrap:wrap;}
+  .tag{font-family:'DM Mono',monospace;font-size:10px;padding:2px 7px;border-radius:99px;border:1px solid;}
+  .tag-natacion{color:var(--accent-water);border-color:rgba(56,189,248,.3);background:rgba(56,189,248,.06);}
+  .tag-eliptica{color:var(--accent-move);border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.06);}
+  .tag-descanso{color:var(--accent-rest);border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.06);}
+  .tag-hiit{color:var(--accent-warn);border-color:rgba(251,146,60,.3);background:rgba(251,146,60,.06);}
+  .tag-futbol{color:var(--accent-foot);border-color:rgba(244,114,182,.3);background:rgba(244,114,182,.06);}
+  .day-chevron{color:var(--text-muted);transition:transform .25s;font-size:16px;}
+  .day-card.open .day-chevron{transform:rotate(180deg);}
+  .day-content{display:none;padding:0 18px 18px;border-top:1px solid var(--border);}
+  .day-card.open .day-content{display:block;}
+  .session-block{padding-top:16px;}
+  .session-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .session-label::after{content:'';flex:1;height:1px;background:var(--border);}
+  .session-label.water{color:var(--accent-water);}
+  .session-label.move{color:var(--accent-move);}
+  .session-label.foot{color:var(--accent-foot);}
+  .toggle-wrap{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface2);border-radius:10px;margin-bottom:12px;}
+  .toggle-label{font-size:12px;color:var(--text-muted);flex:1;font-family:'DM Mono',monospace;letter-spacing:.05em;}
+  .toggle-switch{position:relative;width:40px;height:22px;flex-shrink:0;}
+  .toggle-switch input{opacity:0;width:0;height:0;position:absolute;}
+  .toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:99px;cursor:pointer;transition:.2s;}
+  .toggle-slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;bottom:3px;background:var(--text-muted);border-radius:50%;transition:.2s;}
+  .toggle-switch input:checked+.toggle-slider{background:rgba(167,139,250,.3);border:1px solid var(--accent-move);}
+  .toggle-switch input:checked+.toggle-slider::before{transform:translateX(18px);background:var(--accent-move);}
+  .panel{display:none;}
+  .panel.active{display:block;}
+  /* ALERT BANNER */
+  .alert-banner{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.25);border-radius:10px;margin-bottom:12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--accent-warn);line-height:1.5;}
+  .alert-banner.info{background:rgba(56,189,248,.06);border-color:rgba(56,189,248,.2);color:var(--accent-water);}
+  /* MONDAY VARIANT TOGGLE */
+  .variant-tabs{display:flex;gap:8px;margin-bottom:14px;}
+  .variant-btn{flex:1;padding:8px 10px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s;text-align:center;}
+  .variant-btn.active{border-color:var(--accent-move);color:var(--accent-move);background:rgba(167,139,250,.08);}
+  .swim-log{background:var(--surface2);border-radius:10px;padding:14px;}
+  .swim-log-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+  .log-field label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--text-muted);text-transform:uppercase;display:block;margin-bottom:5px;}
+  .log-field input,.log-field textarea{width:100%;background:var(--border);border:1px solid transparent;border-radius:7px;padding:8px 10px;color:var(--text);font-family:'Epilogue',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
+  .log-field input:focus,.log-field textarea:focus{border-color:var(--accent-water);}
+  .log-field textarea{resize:vertical;min-height:56px;}
+  .log-field.full{grid-column:1/-1;}
+  .save-log-btn{width:100%;padding:9px;border-radius:8px;border:1px solid var(--accent-water);background:rgba(56,189,248,.08);color:var(--accent-water);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;cursor:pointer;transition:all .2s;}
+  .log-saved{display:none;font-family:'DM Mono',monospace;font-size:11px;color:var(--accent-rest);text-align:center;margin-top:8px;}
+  .foot-log{background:var(--surface2);border-radius:10px;padding:14px;}
+  .foot-log-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+  .exercise-list{list-style:none;display:flex;flex-direction:column;gap:7px;}
+  .exercise-item{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;background:var(--surface2);border-radius:10px;border:1px solid transparent;cursor:pointer;transition:all .2s;}
+  .exercise-item:hover{border-color:var(--border);}
+  .exercise-item.done{background:rgba(74,222,128,.05);border-color:rgba(74,222,128,.15);}
+  .exercise-item.done .ex-title{text-decoration:line-through;color:var(--text-muted);}
+  .ex-check{width:17px;height:17px;border-radius:5px;border:1.5px solid var(--text-dim);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:10px;}
+  .exercise-item.done .ex-check{background:var(--accent-rest);border-color:var(--accent-rest);color:#0a0e14;}
+  .ex-body{flex:1;}
+  .ex-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;line-height:1.4;}
+  .ex-detail{font-size:12px;color:var(--text-muted);line-height:1.5;}
+  .ex-meta{display:flex;gap:8px;margin-top:5px;flex-wrap:wrap;}
+  .ex-pill{font-family:'DM Mono',monospace;font-size:10px;padding:2px 7px;border-radius:99px;background:var(--border);color:var(--text-muted);}
+  .ex-pill.z1{background:rgba(52,211,153,.1);color:var(--accent-rest);}
+  .ex-pill.z2{background:rgba(56,189,248,.1);color:var(--accent-water);}
+  .ex-pill.z3{background:rgba(251,146,60,.1);color:var(--accent-warn);}
+  .ex-pill.z4{background:rgba(239,68,68,.1);color:#f87171;}
+  .optional-badge{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent-rest);border:1px solid rgba(52,211,153,.3);padding:2px 8px;border-radius:99px;margin-left:auto;}
+  .intensity-badge{font-family:'DM Mono',monospace;font-size:10px;padding:3px 9px;border-radius:99px;margin-left:8px;}
+  .int-light{background:rgba(52,211,153,.1);color:var(--accent-rest);border:1px solid rgba(52,211,153,.2);}
+  .int-mod{background:rgba(56,189,248,.1);color:var(--accent-water);border:1px solid rgba(56,189,248,.2);}
+  .int-hard{background:rgba(251,146,60,.1);color:var(--accent-warn);border:1px solid rgba(251,146,60,.2);}
+  .int-hiit{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+  .mark-day-btn{margin-top:14px;width:100%;padding:9px;border-radius:9px;border:1px dashed var(--border);background:transparent;color:var(--text-muted);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;cursor:pointer;transition:all .2s;}
+  .mark-day-btn:hover{border-color:var(--accent-rest);color:var(--accent-rest);}
+  .day-card.completed .mark-day-btn{border-color:rgba(74,222,128,.3);color:var(--accent-rest);background:rgba(74,222,128,.05);}
+  .rest-day-msg{padding:16px 0;text-align:center;font-size:13px;color:var(--text-muted);}
+  .reset-btn{display:block;margin:36px auto 0;padding:9px 26px;border-radius:99px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;cursor:pointer;transition:all .2s;}
+  .reset-btn:hover{border-color:#f87171;color:#f87171;}
+  @media(max-width:520px){.global-progress{grid-template-columns:1fr 1fr;}.progress-bar-wrap{grid-column:1/-1;}.swim-log-grid,.foot-log-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -173,7 +129,6 @@
   <div class="header-label">Entrenamiento personal</div>
   <h1>Natación <span>+</span> Elíptica</h1>
 
-  <!-- GLOBAL PROGRESS -->
   <div class="global-progress">
     <div class="stat-item"><label>Días completados</label><div class="stat-num" id="days-done">0 <span>/ —</span></div></div>
     <div class="stat-item"><label>Sesiones registradas</label><div class="stat-num" id="ex-done">0 <span>/ <span id="ex-total">—</span></span></div></div>
@@ -184,15 +139,13 @@
     </div>
   </div>
 
-  <!-- LEGEND -->
   <div class="legend">
     <div class="legend-item"><div class="legend-dot" style="background:var(--accent-water)"></div>Natación</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--accent-move)"></div>Elíptica</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--accent-foot)"></div>Fútbol</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-rest)"></div>Opcional / Descarga</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-rest)"></div>Opcional</div>
   </div>
 
-  <!-- MONTH NAV -->
   <div class="month-nav">
     <button class="month-btn" onclick="prevMonth()">‹</button>
     <span class="month-title" id="month-title">Mes 1</span>
@@ -206,761 +159,636 @@
 
 <script>
 // ============================================================
-// PLAN DATA
+// EXERCISE LIBRARY
 // ============================================================
-const MONTHS = [
-  {
-    month: 1,
-    label: "Mes 1 · Adaptación",
-    weeks: [
-      {
-        week: 1,
-        label: "Semana 1",
-        days: [
-          {
-            id:"m1w1d1", name:"Lunes", tags:["eliptica"],
-            intensity:"mod",
-            sessions:[{
-              type:"move", label:"Elíptica · 35 min · Zona 2 base",
-              exercises:[
-                {id:"m1w1d1e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2–3. Cadencia suave 50–60 rpm. Deja que el corazón suba de manera gradual.", meta:["5 min","Z1","Res. 2–3"]},
-                {id:"m1w1d1e2", title:"Zona 2 continua – 25 min", detail:"Resistencia 4–5. Cadencia 65–70 rpm. Conversación posible con esfuerzo. Brazos activos en las barras móviles: empuja con el brazo contrario al pie que avanza. El dorsal ancho, el trapecio y los deltoides posteriores trabajan directamente, los mismos músculos que en la brazada de crol.", meta:["25 min","Z2","Res. 4–5","60–70% FC"]},
-                {id:"m1w1d1e3", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2. Cadencia decreciente. Lleva la respiración a ritmo normal.", meta:["5 min","Z1"]}
-              ]
-            }]
-          },
-          {
-            id:"m1w1d2", name:"Martes", tags:["eliptica"],
-            intensity:"light",
-            sessions:[{
-              type:"move", label:"Elíptica · 35 min · Pedaleo invertido",
-              exercises:[
-                {id:"m1w1d2e1", title:"Calentamiento – 5 min Zona 1 (marcha adelante)", detail:"Resistencia 2. Activa articulaciones antes del cambio de dirección.", meta:["5 min","Z1"]},
-                {id:"m1w1d2e2", title:"Zona 2 hacia adelante – 15 min", detail:"Resistencia 4–5. Cadencia 65 rpm. Empuja con el talón en la parte baja del movimiento para activar el glúteo mayor, músculo determinante en el pateo de crol.", meta:["15 min","Z2","Res. 4–5"]},
-                {id:"m1w1d2e3", title:"Pedaleo invertido – 10 min Zona 2", detail:"Invierte la dirección del pedaleo. Resistencia 3–4. Activa bíceps femoral y gemelos con mayor énfasis. El sistema nervioso trabaja más al ser un patrón motor diferente. Mantén espalda erguida.", meta:["10 min","Z2","Invertido","Res. 3–4"]},
-                {id:"m1w1d2e4", title:"Enfriamiento – 5 min Zona 1", detail:"Vuelve a la marcha adelante. Resistencia 2. Cadencia mínima.", meta:["5 min","Z1"]}
-              ]
-            }]
-          },
-          {
-            id:"m1w1d3", name:"Miércoles", tags:["natacion","eliptica"],
-            intensity:"mod",
-            isSwimDay:true,
-            sessions:[
-              {type:"water", label:"Natación con entrenador", isSwimLog:true},
-              {type:"move", label:"Elíptica post-natación · 20 min · Complementaria",
-              exercises:[
-                {id:"m1w1d3e1", title:"Calentamiento – 3 min Zona 1", detail:"Resistencia 2. El cuerpo ya está activo por la natación. Ajusta la postura en la máquina.", meta:["3 min","Z1"]},
-                {id:"m1w1d3e2", title:"Zona 1–2 continua – 14 min", detail:"Resistencia 3–4. Cadencia 60 rpm. Sesión corta de refuerzo aeróbico. El objetivo es sumar volumen cardiovascular ligero sin generar fatiga adicional en las piernas. No busques sensaciones intensas.", meta:["14 min","Z1–Z2","Res. 3–4"]},
-                {id:"m1w1d3e3", title:"Enfriamiento – 3 min Zona 1", detail:"Resistencia 2. Estira cuádriceps, gemelos y hombros al finalizar.", meta:["3 min","Z1"]}
-              ]}
-            ]
-          },
-          {
-            id:"m1w1d4", name:"Jueves", tags:["eliptica"],
-            intensity:"mod",
-            isThursday:true,
-            sessions:[]
-          },
-          {
-            id:"m1w1d5", name:"Viernes", tags:["natacion","eliptica"],
-            intensity:"light",
-            isSwimDay:true,
-            sessions:[
-              {type:"water", label:"Natación con entrenador", isSwimLog:true},
-              {type:"move", label:"Elíptica post-natación · 20 min · Descarga activa",
-              exercises:[
-                {id:"m1w1d5e1", title:"Calentamiento – 3 min Zona 1", detail:"Resistencia 2.", meta:["3 min","Z1"]},
-                {id:"m1w1d5e2", title:"Zona 1 continua – 14 min", detail:"Resistencia 2–3. Cadencia baja 55 rpm. Viernes es el día de menor carga en la elíptica. El cuerpo llega ya trabajado de la natación y mañana hay sesión nuevamente. Mantén el movimiento sin estrés.", meta:["14 min","Z1","Res. 2–3"]},
-                {id:"m1w1d5e3", title:"Enfriamiento – 3 min", detail:"Resistencia 2. Cadencia muy suave.", meta:["3 min","Z1"]}
-              ]}
-            ]
-          },
-          {
-            id:"m1w1d6", name:"Sábado", tags:["natacion"],
-            intensity:"light",
-            isSwimDay:true, isWeekend:true,
-            sessions:[
-              {type:"water", label:"Natación con entrenador", isSwimLog:true},
-              {type:"move", label:"Elíptica · 20 min · Opcional", isOptional:true,
-              exercises:[
-                {id:"m1w1d6e1", title:"Sesión opcional – 20 min Zona 1", detail:"Solo si te sientes bien después de nadar. Resistencia 2–3. Cadencia suave. Si las piernas están cargadas, omite esta sesión sin remordimiento.", meta:["20 min","Z1","Opcional"]}
-              ]}
-            ]
-          },
-          {
-            id:"m1w1d7", name:"Domingo", tags:["eliptica"],
-            intensity:"light",
-            isWeekend:true,
-            sessions:[{
-              type:"move", label:"Elíptica · 25 min · Opcional según energía", isOptional:true,
-              exercises:[
-                {id:"m1w1d7e1", title:"Sesión opcional de descarga – 25 min Zona 1", detail:"Resistencia 1–2 durante toda la sesión. Cadencia entre 45 y 55 rpm. Si llegas cansado del fin de semana, omite. Si te sientes bien, aprovecha para mantener el hábito. Sin objetivos de intensidad.", meta:["25 min","Z1","Opcional","Recuperación"]}
-              ]
-            }]
-          }
-        ]
-      },
-      {
-        week: 2,
-        label: "Semana 2",
-        days: [
-          {
-            id:"m1w2d1", name:"Lunes", tags:["eliptica"],
-            intensity:"hard",
-            sessions:[{
-              type:"move", label:"Elíptica · 40 min · Intervalos Z2–Z3",
-              exercises:[
-                {id:"m1w2d1e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2–3. Cadencia creciente hasta 65 rpm.", meta:["5 min","Z1"]},
-                {id:"m1w2d1e2", title:"Bloques alternados – 5 × (3 min Z2 + 2 min Z3)", detail:"En Z2: resistencia 4–5, cadencia 65 rpm. En Z3: sube resistencia a 6–7 manteniendo la misma cadencia. En Z3 la conversación es posible solo con frases cortas. El contraste de intensidad dentro de cada bloque entrena la recuperación cardiovascular mientras sigues pedaleando.", meta:["5 rondas","Z2→Z3","25 min"]},
-                {id:"m1w2d1e3", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2. Cadencia decreciente.", meta:["5 min","Z1"]}
-              ]
-            }]
-          },
-          {
-            id:"m1w2d2", name:"Martes", tags:["eliptica"],
-            intensity:"mod",
-            sessions:[{
-              type:"move", label:"Elíptica · 35 min · Pirámide de resistencia",
-              exercises:[
-                {id:"m1w2d2e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]},
-                {id:"m1w2d2e2", title:"Pirámide ascendente – 3 × 5 min", detail:"Bloque 1: 5 min a resistencia 4 (Z2 baja). Bloque 2: 5 min a resistencia 6 (Z2 alta). Bloque 3: 5 min a resistencia 8 (Z3 firme). Cadencia constante en 65 rpm. El esfuerzo percibido aumenta al crecer la resistencia sin cambiar el ritmo de pedaleo.", meta:["3×5 min","Res. 4→6→8","Z2→Z3"]},
-                {id:"m1w2d2e3", title:"Pirámide descendente – 2 × 5 min", detail:"Bloque 4: 5 min a resistencia 6. Bloque 5: 5 min a resistencia 4. La frecuencia cardíaca desciende progresivamente. Entrena la capacidad de recuperación.", meta:["2×5 min","Res. 6→4"]},
-                {id:"m1w2d2e4", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2. Cadencia decreciente hasta 45 rpm.", meta:["5 min","Z1"]}
-              ]
-            }]
-          },
-          {
-            id:"m1w2d3", name:"Miércoles", tags:["natacion","eliptica"],
-            intensity:"mod",
-            isSwimDay:true,
-            sessions:[
-              {type:"water", label:"Natación con entrenador", isSwimLog:true},
-              {type:"move", label:"Elíptica post-natación · 20 min · Complementaria",
-              exercises:[
-                {id:"m1w2d3e1", title:"Calentamiento – 3 min Zona 1", detail:"Resistencia 2.", meta:["3 min","Z1"]},
-                {id:"m1w2d3e2", title:"Fartlek de cadencia – 14 min", detail:"Resistencia fija nivel 4. Alterna cada 3 min: cadencia media 65 rpm → cadencia alta 78 rpm. El cambio de cadencia sin cambiar resistencia varía la demanda cardiovascular sin sobrecargar las piernas después de nadar.", meta:["14 min","Fartlek","Res. 4"]},
-                {id:"m1w2d3e3", title:"Enfriamiento – 3 min Zona 1", detail:"Resistencia 2. Cadencia mínima.", meta:["3 min","Z1"]}
-              ]}
-            ]
-          },
-          {
-            id:"m1w2d4", name:"Jueves", tags:["eliptica"],
-            intensity:"hard",
-            isThursday:true,
-            sessions:[]
-          },
-          {
-            id:"m1w2d5", name:"Viernes", tags:["natacion","eliptica"],
-            intensity:"light",
-            isSwimDay:true,
-            sessions:[
-              {type:"water", label:"Natación con entrenador", isSwimLog:true},
-              {type:"move", label:"Elíptica post-natación · 20 min · Zona 1",
-              exercises:[
-                {id:"m1w2d5e1", title:"Calentamiento – 3 min Zona 1", detail:"Resistencia 2.", meta:["3 min","Z1"]},
-                {id:"m1w2d5e2", title:"Zona 1 – 14 min", detail:"Resistencia 2–3. Cadencia 55 rpm. Sesión de mantenimiento post-natación de viernes. El objetivo es solo conservar el movimiento.", meta:["14 min","Z1","Res. 2–3"]},
-                {id:"m1w2d5e3", title:"Enfriamiento – 3 min", detail:"Resistencia 2.", meta:["3 min","Z1"]}
-              ]}
-            ]
-          },
-          {
-            id:"m1w2d6", name:"Sábado", tags:["natacion"],
-            intensity:"light",
-            isSwimDay:true, isWeekend:true,
-            sessions:[
-              {type:"water", label:"Natación con entrenador", isSwimLog:true},
-              {type:"move", label:"Elíptica · 20 min · Opcional", isOptional:true,
-              exercises:[
-                {id:"m1w2d6e1", title:"Sesión opcional – 20 min Zona 1", detail:"Solo si las piernas lo permiten. Resistencia 2–3. Sin superar Zona 1.", meta:["20 min","Z1","Opcional"]}
-              ]}
-            ]
-          },
-          {
-            id:"m1w2d7", name:"Domingo", tags:["eliptica"],
-            intensity:"light",
-            isWeekend:true,
-            sessions:[{
-              type:"move", label:"Elíptica · 30 min · Opcional", isOptional:true,
-              exercises:[
-                {id:"m1w2d7e1", title:"Zona 1–2 – 20 min", detail:"Resistencia 3–4. Cadencia 60 rpm. Aprovecha si tienes energía del fin de semana. Pedaleo mixto: 10 min adelante + 10 min invertido.", meta:["20 min","Z1–Z2","Mixto"]},
-                {id:"m1w2d7e2", title:"Enfriamiento – 5 min", detail:"Resistencia 2.", meta:["5 min","Z1"]}
-              ]
-            }]
-          }
-        ]
-      },
-      {
-        week: 3,
-        label: "Semana 3",
-        days: [
-          {
-            id:"m1w3d1", name:"Lunes", tags:["eliptica","hiit"],
-            intensity:"hiit",
-            sessions:[{
-              type:"move", label:"Elíptica · 30 min · HIIT 30/30",
-              exercises:[
-                {id:"m1w3d1e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2–3. Cadencia progresiva hasta 65 rpm. Calentamiento especialmente importante antes del HIIT.", meta:["5 min","Z1"]},
-                {id:"m1w3d1e2", title:"HIIT 30/30 – 10 rondas", detail:"30 seg a resistencia 9–10, cadencia máxima sostenible (Z4: no puedes hablar). Seguido de 30 seg a resistencia 2, cadencia mínima (Z1: recuperación). Repite 10 veces. Empuja con fuerza brazos y piernas en los 30 seg de esfuerzo. En la recuperación baja la resistencia de inmediato y respira profundo.", meta:["10 rondas","30 seg Z4 / 30 seg Z1","10 min"]},
-                {id:"m1w3d1e3", title:"Zona 2 de transición – 5 min", detail:"Resistencia 4. Movimiento suave para metabolizar el lactato generado.", meta:["5 min","Z2"]},
-                {id:"m1w3d1e4", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2. Cadencia decreciente.", meta:["5 min","Z1"]}
-              ]
-            }]
-          },
-          {
-            id:"m1w3d2", name:"Martes", tags:["eliptica"],
-            intensity:"mod",
-            sessions:[{
-              type:"move", label:"Elíptica · 40 min · Zona 2 extendida + brazos",
-              exercises:[
-                {id:"m1w3d2e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]},
-                {id:"m1w3d2e2", title:"Zona 2 – 30 min con foco en brazos", detail:"Resistencia 5. Cadencia 65–70 rpm. Esta sesión es la contrapartida aeróbica del HIIT del lunes. Foco en la mecánica: espalda erguida, cadera estable, brazos activos y coordinados. Cada vez que el pie derecho avanza, el brazo izquierdo empuja.", meta:["30 min","Z2","Res. 5","Brazos activos"]},
-                {id:"m1w3d2e3", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]}
-              ]
-            }]
-          },
-          {
-            id:"m1w3d3", name:"Miércoles", tags:["natacion","eliptica"],
-            intensity:"mod",
-            isSwimDay:true,
-            sessions:[
-              {type:"water", label:"Natación con entrenador", isSwimLog:true},
-              {type:"move", label:"Elíptica post-natación · 20 min · Complementaria",
-              exercises:[
-                {id:"m1w3d3e1", title:"Calentamiento – 3 min Zona 1", detail:"Resistencia 2.", meta:["3 min","Z1"]},
-                {id:"m1w3d3e2", title:"Zona 1–2 – 14 min con pedaleo invertido", detail:"10 min a resistencia 3–4 marcha adelante + 4 min pedaleo invertido a resistencia 3. El invertido al final activa la cadena posterior de piernas de manera diferente. Mantén cadencia baja (55 rpm).", meta:["14 min","Mixto","Res. 3–4"]},
-                {id:"m1w3d3e3", title:"Enfriamiento – 3 min", detail:"Resistencia 2.", meta:["3 min","Z1"]}
-              ]}
-            ]
-          },
-          {
-            id:"m1w3d4", name:"Jueves", tags:["eliptica"],
-            intensity:"hard",
-            isThursday:true,
-            sessions:[]
-          },
-          {
-            id:"m1w3d5", name:"Viernes", tags:["natacion","eliptica"],
-            intensity:"light",
-            isSwimDay:true,
-            sessions:[
-              {type:"water", label:"Natación con entrenador", isSwimLog:true},
-              {type:"move", label:"Elíptica post-natación · 20 min · Zona 1",
-              exercises:[
-                {id:"m1w3d5e1", title:"Calentamiento – 3 min Zona 1", detail:"Resistencia 2.", meta:["3 min","Z1"]},
-                {id:"m1w3d5e2", title:"Zona 1 – 14 min", detail:"Resistencia 2–3. Cadencia libre entre 50 y 60 rpm. Después del HIIT del lunes y los intervalos del martes, el viernes es el día de menor carga en elíptica por diseño.", meta:["14 min","Z1","Res. 2–3"]},
-                {id:"m1w3d5e3", title:"Enfriamiento – 3 min", detail:"Resistencia 2.", meta:["3 min","Z1"]}
-              ]}
-            ]
-          },
-          {
-            id:"m1w3d6", name:"Sábado", tags:["natacion"],
-            intensity:"light",
-            isSwimDay:true, isWeekend:true,
-            sessions:[
-              {type:"water", label:"Natación con entrenador", isSwimLog:true},
-              {type:"move", label:"Elíptica · 20 min · Opcional", isOptional:true,
-              exercises:[
-                {id:"m1w3d6e1", title:"Sesión opcional – 20 min Zona 1", detail:"Solo si las piernas están bien. Resistencia 2. Cadencia suave.", meta:["20 min","Z1","Opcional"]}
-              ]}
-            ]
-          },
-          {
-            id:"m1w3d7", name:"Domingo", tags:["eliptica"],
-            intensity:"light",
-            isWeekend:true,
-            sessions:[{
-              type:"move", label:"Elíptica · 25 min · Opcional", isOptional:true,
-              exercises:[
-                {id:"m1w3d7e1", title:"Descarga activa – 25 min Zona 1", detail:"Resistencia 2. Cadencia 45–55 rpm. Semana de mayor carga; el domingo es recuperación. Si sientes las piernas pesadas, omite sin dudar.", meta:["25 min","Z1","Recuperación","Opcional"]}
-              ]
-            }]
-          }
-        ]
-      },
-      {
-        week: 4,
-        label: "Semana 4",
-        days: [
-          {
-            id:"m1w4d1", name:"Lunes", tags:["eliptica"],
-            intensity:"hard",
-            sessions:[{
-              type:"move", label:"Elíptica · 40 min · Escalera de resistencia",
-              exercises:[
-                {id:"m1w4d1e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2–3.", meta:["5 min","Z1"]},
-                {id:"m1w4d1e2", title:"Escalera ascendente – 6 × 5 min", detail:"Sube un nivel de resistencia cada 5 min: Res. 4 → 5 → 6 → 7 → 8 → 9. Cadencia constante en 65 rpm durante toda la escalera. El último bloque (Res. 9) debe sentirse duro pero sostenible. Esta progresión entrena mantener la técnica bajo fatiga creciente.", meta:["6×5 min","Res. 4→9","Z2→Z3–Z4"]},
-                {id:"m1w4d1e3", title:"Enfriamiento – 5 min Zona 1", detail:"Baja inmediatamente a resistencia 2. Regula el pulso antes de detenerte.", meta:["5 min","Z1"]}
-              ]
-            }]
-          },
-          {
-            id:"m1w4d2", name:"Martes", tags:["eliptica","hiit"],
-            intensity:"hiit",
-            sessions:[{
-              type:"move", label:"Elíptica · 35 min · HIIT + Tabata",
-              exercises:[
-                {id:"m1w4d2e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2–3.", meta:["5 min","Z1"]},
-                {id:"m1w4d2e2", title:"Zona 2 base – 10 min", detail:"Resistencia 5. Cadencia 65 rpm. Base antes del trabajo intenso.", meta:["10 min","Z2","Res. 5"]},
-                {id:"m1w4d2e3", title:"HIIT 40/20 – 6 rondas", detail:"40 seg a resistencia 9 (Z4) + 20 seg a resistencia 2 (Z1). 6 repeticiones. El ratio 40/20 es más exigente que el 30/30: más tiempo en alta intensidad con menos recuperación.", meta:["6 rondas","40/20 seg","Z4/Z1"]},
-                {id:"m1w4d2e4", title:"Tabata final – 4 rondas", detail:"20 seg a resistencia 10, máximo esfuerzo. 10 seg quieto en la máquina. 4 repeticiones. Total: 2 min. El sistema aeróbico y anaeróbico trabajan simultáneamente.", meta:["4 rondas","20/10 seg","Tabata"]},
-                {id:"m1w4d2e5", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2. Enfriamiento indispensable después de sesión de alta intensidad.", meta:["5 min","Z1"]}
-              ]
-            }]
-          },
-          {
-            id:"m1w4d3", name:"Miércoles", tags:["natacion","eliptica"],
-            intensity:"mod",
-            isSwimDay:true,
-            sessions:[
-              {type:"water", label:"Natación con entrenador", isSwimLog:true},
-              {type:"move", label:"Elíptica post-natación · 20 min · Complementaria",
-              exercises:[
-                {id:"m1w4d3e1", title:"Calentamiento – 3 min Zona 1", detail:"Resistencia 2.", meta:["3 min","Z1"]},
-                {id:"m1w4d3e2", title:"Zona 2 – 14 min", detail:"Resistencia 4. Cadencia 65 rpm. Brazos activos. Sesión de mantenimiento aeróbico post-natación.", meta:["14 min","Z2","Res. 4"]},
-                {id:"m1w4d3e3", title:"Enfriamiento – 3 min", detail:"Resistencia 2.", meta:["3 min","Z1"]}
-              ]}
-            ]
-          },
-          {
-            id:"m1w4d4", name:"Jueves", tags:["eliptica"],
-            intensity:"mod",
-            isThursday:true,
-            sessions:[]
-          },
-          {
-            id:"m1w4d5", name:"Viernes", tags:["natacion","eliptica"],
-            intensity:"light",
-            isSwimDay:true,
-            sessions:[
-              {type:"water", label:"Natación con entrenador", isSwimLog:true},
-              {type:"move", label:"Elíptica post-natación · 20 min · Zona 1",
-              exercises:[
-                {id:"m1w4d5e1", title:"Calentamiento – 3 min Zona 1", detail:"Resistencia 2.", meta:["3 min","Z1"]},
-                {id:"m1w4d5e2", title:"Zona 1 – 14 min", detail:"Resistencia 2–3. Cadencia libre. Cierre de semana intensa: lunes y martes fueron de alta exigencia, viernes es de descarga en elíptica.", meta:["14 min","Z1"]},
-                {id:"m1w4d5e3", title:"Enfriamiento – 3 min", detail:"Resistencia 2.", meta:["3 min","Z1"]}
-              ]}
-            ]
-          },
-          {
-            id:"m1w4d6", name:"Sábado", tags:["natacion"],
-            intensity:"light",
-            isSwimDay:true, isWeekend:true,
-            sessions:[
-              {type:"water", label:"Natación con entrenador", isSwimLog:true},
-              {type:"move", label:"Elíptica · 20 min · Opcional", isOptional:true,
-              exercises:[
-                {id:"m1w4d6e1", title:"Sesión opcional – 20 min Zona 1", detail:"Solo si tienes energía. Resistencia 2. Cierre del primer mes.", meta:["20 min","Z1","Opcional"]}
-              ]}
-            ]
-          },
-          {
-            id:"m1w4d7", name:"Domingo", tags:["eliptica"],
-            intensity:"light",
-            isWeekend:true,
-            sessions:[{
-              type:"move", label:"Elíptica · 30 min · Cierre del mes · Opcional", isOptional:true,
-              exercises:[
-                {id:"m1w4d7e1", title:"Sesión de cierre – 30 min Zona 1", detail:"Resistencia 2. Cadencia libre. Dedica los últimos 5 min a estiramiento: cuádriceps, isquiotibiales, glúteos, pectorales y hombros. Compara cómo te sientes hoy con el primer domingo del mes.", meta:["30 min","Z1","Cierre Mes 1","Opcional"]}
-              ]
-            }]
-          }
-        ]
-      }
-    ]
-  }
-];
 
-// THURSDAY EXERCISE OPTIONS (when no football)
-const THURSDAY_ELLIPTICAL = {
-  m1w1: { type:"move", label:"Elíptica · 35 min · Intervalos suaves",
-    exercises:[
-      {id:"m1w1d4e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2–3. Cadencia suave.", meta:["5 min","Z1"]},
-      {id:"m1w1d4e2", title:"Bloques alternados – 5 × (3 min Z2 + 2 min Z3)", detail:"Z2: resistencia 4–5, cadencia 65 rpm. Z3: resistencia 6–7, misma cadencia. En Z3 puedes hablar solo con frases cortas. El contraste de intensidad entrena la recuperación cardiovascular activa.", meta:["5 rondas","Z2→Z3","25 min"]},
-      {id:"m1w1d4e3", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2. Cadencia decreciente.", meta:["5 min","Z1"]}
-    ]
+// MONDAY SESSIONS: two variants per week
+// Variant A = fin de semana activo (más suave), Variant B = fin de semana de descanso (más intenso)
+const MON_SESSIONS = {
+  m1w1: {
+    varA: { label:"Elíptica · 30 min · Zona 2 suave (fin de semana activo)", exercises:[
+      {id:"m1w1d1A1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2. El cuerpo viene de un fin de semana activo. Arranque tranquilo.", meta:["5 min","Z1"]},
+      {id:"m1w1d1A2", title:"Zona 2 continua – 20 min", detail:"Resistencia 4. Cadencia 62–65 rpm. Sin variaciones de intensidad. El volumen es menor que el de la variante B porque acumulaste carga el fin de semana.", meta:["20 min","Z2","Res. 4"]},
+      {id:"m1w1d1A3", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2. Cadencia decreciente.", meta:["5 min","Z1"]}
+    ]},
+    varB: { label:"Elíptica · 35 min · Zona 2 base (fin de semana descansado)", exercises:[
+      {id:"m1w1d1B1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2–3. Cadencia progresiva hasta 65 rpm.", meta:["5 min","Z1"]},
+      {id:"m1w1d1B2", title:"Zona 2 continua – 25 min", detail:"Resistencia 4–5. Cadencia 65–70 rpm. Brazos activos en barras móviles. Empuja con el brazo contrario al pie que avanza.", meta:["25 min","Z2","Res. 4–5","60–70% FC"]},
+      {id:"m1w1d1B3", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2. Cadencia decreciente.", meta:["5 min","Z1"]}
+    ]}
   },
-  m1w2: { type:"move", label:"Elíptica · 40 min · Zona 2 con picos Z4",
-    exercises:[
-      {id:"m1w2d4e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2–3.", meta:["5 min","Z1"]},
-      {id:"m1w2d4e2", title:"Zona 2 continua – 20 min", detail:"Resistencia 5. Cadencia 65–70 rpm. Base aeróbica estable.", meta:["20 min","Z2","Res. 5"]},
-      {id:"m1w2d4e3", title:"3 picos Z4 – 3 × (2 min Z4 + 2 min Z1)", detail:"Resistencia 8–9 por 2 min (Z4: muy difícil hablar). Luego resistencia 2 por 2 min (recuperación). Tres repeticiones. Expone brevemente el sistema cardiorrespiratorio a alta intensidad.", meta:["3×2 min","Z4→Z1","Res. 8–9"]},
-      {id:"m1w2d4e4", title:"Enfriamiento – 3 min Zona 1", detail:"Resistencia 2.", meta:["3 min","Z1"]}
-    ]
+  m1w2: {
+    varA: { label:"Elíptica · 30 min · Intervalos suaves (fin de semana activo)", exercises:[
+      {id:"m1w2d1A1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]},
+      {id:"m1w2d1A2", title:"Bloques suaves – 4 × (3 min Z2 + 2 min Z1)", detail:"Z2: resistencia 4, cadencia 65 rpm. Z1: resistencia 2. Versión reducida de los intervalos: solo 4 rondas y con recuperación completa en Z1 entre bloques.", meta:["4 rondas","Z2→Z1","20 min"]},
+      {id:"m1w2d1A3", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]}
+    ]},
+    varB: { label:"Elíptica · 40 min · Intervalos Z2–Z3 (fin de semana descansado)", exercises:[
+      {id:"m1w2d1B1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2–3. Cadencia creciente.", meta:["5 min","Z1"]},
+      {id:"m1w2d1B2", title:"Bloques alternados – 5 × (3 min Z2 + 2 min Z3)", detail:"Z2: resistencia 4–5. Z3: sube resistencia a 6–7, misma cadencia 65 rpm. En Z3 la conversación es posible solo con frases cortas.", meta:["5 rondas","Z2→Z3","25 min"]},
+      {id:"m1w2d1B3", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]}
+    ]}
   },
-  m1w3: { type:"move", label:"Elíptica · 35 min · Resistencia progresiva",
-    exercises:[
-      {id:"m1w3d4e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2–3.", meta:["5 min","Z1"]},
-      {id:"m1w3d4e2", title:"Escalera – 5 × 5 min", detail:"Sube resistencia cada 5 min: 4 → 5 → 6 → 7 → 8. Cadencia 65 rpm. Versión más corta que la escalera del lunes semana 4.", meta:["5×5 min","Res. 4→8","Z2→Z3"]},
-      {id:"m1w3d4e3", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]}
-    ]
+  m1w3: {
+    varA: { label:"Elíptica · 30 min · Zona 2 con pedaleo invertido (fin de semana activo)", exercises:[
+      {id:"m1w3d1A1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]},
+      {id:"m1w3d1A2", title:"Pedaleo adelante – 12 min Z2", detail:"Resistencia 4. Cadencia 65 rpm.", meta:["12 min","Z2"]},
+      {id:"m1w3d1A3", title:"Pedaleo invertido – 8 min Z2", detail:"Resistencia 3. Marcha atrás. Activa cadena posterior.", meta:["8 min","Z2","Invertido"]},
+      {id:"m1w3d1A4", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]}
+    ]},
+    varB: { label:"Elíptica · 30 min · HIIT 30/30 (fin de semana descansado)", exercises:[
+      {id:"m1w3d1B1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2–3. Cadencia progresiva. Calentamiento imprescindible antes del HIIT.", meta:["5 min","Z1"]},
+      {id:"m1w3d1B2", title:"HIIT 30/30 – 10 rondas", detail:"30 seg a resistencia 9–10 (Z4: no puedes hablar). 30 seg a resistencia 2 (Z1: recuperación). 10 repeticiones. Empuja con fuerza brazos y piernas en los 30 seg de esfuerzo.", meta:["10 rondas","30s Z4 / 30s Z1","10 min"]},
+      {id:"m1w3d1B3", title:"Zona 2 de transición – 5 min", detail:"Resistencia 4. Metaboliza el lactato generado.", meta:["5 min","Z2"]},
+      {id:"m1w3d1B4", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]}
+    ]}
   },
-  m1w4: { type:"move", label:"Elíptica · 35 min · Sesión intuitiva",
-    exercises:[
-      {id:"m1w4d4e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]},
-      {id:"m1w4d4e2", title:"Sesión intuitiva – 25 min Z1–Z2", detail:"Elige la resistencia según cómo te sientas. Límite: no superar Z2. Si la resistencia que usabas en Z2 al inicio del mes ahora se siente como Z1, es señal de adaptación cardiovascular.", meta:["25 min","Z1–Z2","Intuitivo"]},
-      {id:"m1w4d4e3", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]}
-    ]
+  m1w4: {
+    varA: { label:"Elíptica · 35 min · Escalera media (fin de semana activo)", exercises:[
+      {id:"m1w4d1A1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]},
+      {id:"m1w4d1A2", title:"Escalera – 4 × 5 min", detail:"Res. 4 → 5 → 6 → 7. Cadencia 65 rpm. Versión reducida de la escalera completa.", meta:["4×5 min","Res. 4→7","Z2→Z3"]},
+      {id:"m1w4d1A3", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]}
+    ]},
+    varB: { label:"Elíptica · 40 min · Escalera completa (fin de semana descansado)", exercises:[
+      {id:"m1w4d1B1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2–3.", meta:["5 min","Z1"]},
+      {id:"m1w4d1B2", title:"Escalera ascendente – 6 × 5 min", detail:"Res. 4→5→6→7→8→9. Cadencia constante 65 rpm. El último bloque debe sentirse duro pero sostenible.", meta:["6×5 min","Res. 4→9","Z2→Z4"]},
+      {id:"m1w4d1B3", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]}
+    ]}
   }
 };
+
+// THURSDAY ELLIPTICAL (when no football)
+const THU_ELL = {
+  m1w1: { label:"Elíptica · 35 min · Intervalos suaves", exercises:[
+    {id:"m1w1d4e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2–3.", meta:["5 min","Z1"]},
+    {id:"m1w1d4e2", title:"Bloques alternados – 5 × (3 min Z2 + 2 min Z3)", detail:"Z2: resistencia 4–5, cadencia 65 rpm. Z3: resistencia 6–7, misma cadencia.", meta:["5 rondas","Z2→Z3","25 min"]},
+    {id:"m1w1d4e3", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]}
+  ]},
+  m1w2: { label:"Elíptica · 40 min · Zona 2 con picos Z4", exercises:[
+    {id:"m1w2d4e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2–3.", meta:["5 min","Z1"]},
+    {id:"m1w2d4e2", title:"Zona 2 – 20 min", detail:"Resistencia 5. Cadencia 65–70 rpm.", meta:["20 min","Z2","Res. 5"]},
+    {id:"m1w2d4e3", title:"3 picos Z4 – 3 × (2 min Z4 + 2 min Z1)", detail:"Resistencia 8–9 por 2 min. Luego resistencia 2 por 2 min de recuperación.", meta:["3×2 min","Z4→Z1"]},
+    {id:"m1w2d4e4", title:"Enfriamiento – 3 min Zona 1", detail:"Resistencia 2.", meta:["3 min","Z1"]}
+  ]},
+  m1w3: { label:"Elíptica · 35 min · Pirámide de resistencia", exercises:[
+    {id:"m1w3d4e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]},
+    {id:"m1w3d4e2", title:"Pirámide – 5 × 5 min", detail:"Res. 4→5→6→7→8. Cadencia 65 rpm.", meta:["5×5 min","Res. 4→8","Z2→Z3"]},
+    {id:"m1w3d4e3", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]}
+  ]},
+  m1w4: { label:"Elíptica · 35 min · Sesión intuitiva", exercises:[
+    {id:"m1w4d4e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]},
+    {id:"m1w4d4e2", title:"Sesión intuitiva – 25 min Z1–Z2", detail:"Elige la resistencia según cómo te sientas. No superes Z2. Si la resistencia de Z2 del mes 1 ahora te parece Z1, es señal de adaptación.", meta:["25 min","Z1–Z2","Intuitivo"]},
+    {id:"m1w4d4e3", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]}
+  ]}
+};
+
+// FRIDAY POST-FOOTBALL (reduced session when thursday had football)
+const FRI_POST_FOOT = { label:"Elíptica post-natación · 15 min · Descarga (post-fútbol ayer)", exercises:[
+  {id:"fri_pf_e1", title:"Zona 1 – 12 min", detail:"Resistencia 2. Cadencia 50 rpm. El cuerpo llega con fatiga acumulada de fútbol ayer más la natación de hoy. Esta sesión es solo movimiento suave de recuperación. No hay objetivo cardiovascular, solo mantener la circulación.", meta:["12 min","Z1","Res. 2","Post-fútbol"]},
+  {id:"fri_pf_e2", title:"Enfriamiento – 3 min", detail:"Resistencia 1. Cadencia mínima.", meta:["3 min","Z1"]}
+]};
+
+// REGULAR FRIDAY POST-SWIM SESSIONS
+const FRI_REGULAR = {
+  m1w1: { label:"Elíptica post-natación · 20 min · Zona 1", exercises:[
+    {id:"m1w1d5e1", title:"Calentamiento – 3 min Zona 1", detail:"Resistencia 2.", meta:["3 min","Z1"]},
+    {id:"m1w1d5e2", title:"Zona 1 – 14 min", detail:"Resistencia 2–3. Cadencia 55 rpm. Sesión de menor carga de la semana en elíptica.", meta:["14 min","Z1","Res. 2–3"]},
+    {id:"m1w1d5e3", title:"Enfriamiento – 3 min", detail:"Resistencia 2.", meta:["3 min","Z1"]}
+  ]},
+  m1w2: { label:"Elíptica post-natación · 20 min · Zona 1", exercises:[
+    {id:"m1w2d5e1", title:"Calentamiento – 3 min Zona 1", detail:"Resistencia 2.", meta:["3 min","Z1"]},
+    {id:"m1w2d5e2", title:"Zona 1 – 14 min", detail:"Resistencia 2–3. Cadencia libre 50–60 rpm.", meta:["14 min","Z1"]},
+    {id:"m1w2d5e3", title:"Enfriamiento – 3 min", detail:"Resistencia 2.", meta:["3 min","Z1"]}
+  ]},
+  m1w3: { label:"Elíptica post-natación · 20 min · Zona 1", exercises:[
+    {id:"m1w3d5e1", title:"Calentamiento – 3 min Zona 1", detail:"Resistencia 2.", meta:["3 min","Z1"]},
+    {id:"m1w3d5e2", title:"Zona 1 – 14 min", detail:"Resistencia 2–3. Después del HIIT del lunes y el martes, el viernes es el día de menor carga.", meta:["14 min","Z1"]},
+    {id:"m1w3d5e3", title:"Enfriamiento – 3 min", detail:"Resistencia 2.", meta:["3 min","Z1"]}
+  ]},
+  m1w4: { label:"Elíptica post-natación · 20 min · Zona 1", exercises:[
+    {id:"m1w4d5e1", title:"Calentamiento – 3 min Zona 1", detail:"Resistencia 2.", meta:["3 min","Z1"]},
+    {id:"m1w4d5e2", title:"Zona 1 – 14 min", detail:"Resistencia 2–3. Viernes de descarga en elíptica: lunes y martes fueron intensos.", meta:["14 min","Z1"]},
+    {id:"m1w4d5e3", title:"Enfriamiento – 3 min", detail:"Resistencia 2.", meta:["3 min","Z1"]}
+  ]}
+};
+
+// WEDNESDAY POST-SWIM
+const WED_POST = {
+  m1w1: { label:"Elíptica post-natación · 20 min · Complementaria", exercises:[
+    {id:"m1w1d3e1", title:"Calentamiento – 3 min Zona 1", detail:"Resistencia 2.", meta:["3 min","Z1"]},
+    {id:"m1w1d3e2", title:"Zona 1–2 – 14 min", detail:"Resistencia 3–4. Cadencia 60 rpm. Refuerzo aeróbico ligero sin sobrecargar piernas.", meta:["14 min","Z1–Z2","Res. 3–4"]},
+    {id:"m1w1d3e3", title:"Enfriamiento – 3 min Zona 1", detail:"Resistencia 2.", meta:["3 min","Z1"]}
+  ]},
+  m1w2: { label:"Elíptica post-natación · 20 min · Fartlek de cadencia", exercises:[
+    {id:"m1w2d3e1", title:"Calentamiento – 3 min Zona 1", detail:"Resistencia 2.", meta:["3 min","Z1"]},
+    {id:"m1w2d3e2", title:"Fartlek de cadencia – 14 min", detail:"Resistencia fija 4. Alterna cada 3 min: 65 rpm → 78 rpm. La variación de cadencia cambia la demanda sin añadir resistencia.", meta:["14 min","Fartlek","Res. 4"]},
+    {id:"m1w2d3e3", title:"Enfriamiento – 3 min", detail:"Resistencia 2.", meta:["3 min","Z1"]}
+  ]},
+  m1w3: { label:"Elíptica post-natación · 20 min · Mixta", exercises:[
+    {id:"m1w3d3e1", title:"Calentamiento – 3 min Zona 1", detail:"Resistencia 2.", meta:["3 min","Z1"]},
+    {id:"m1w3d3e2", title:"10 min adelante + 4 min invertido", detail:"Adelante: resistencia 3–4, cadencia 63 rpm. Invertido: resistencia 3, cadencia 55 rpm. El invertido activa cadena posterior de diferente manera.", meta:["14 min","Mixta","Res. 3–4"]},
+    {id:"m1w3d3e3", title:"Enfriamiento – 3 min", detail:"Resistencia 2.", meta:["3 min","Z1"]}
+  ]},
+  m1w4: { label:"Elíptica post-natación · 20 min · Zona 2", exercises:[
+    {id:"m1w4d3e1", title:"Calentamiento – 3 min Zona 1", detail:"Resistencia 2.", meta:["3 min","Z1"]},
+    {id:"m1w4d3e2", title:"Zona 2 – 14 min", detail:"Resistencia 4. Cadencia 65 rpm. Brazos activos.", meta:["14 min","Z2","Res. 4"]},
+    {id:"m1w4d3e3", title:"Enfriamiento – 3 min", detail:"Resistencia 2.", meta:["3 min","Z1"]}
+  ]}
+};
+
+// TUESDAY SESSIONS
+const TUE_SESSIONS = {
+  m1w1: { label:"Elíptica · 35 min · Pedaleo invertido", exercises:[
+    {id:"m1w1d2e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]},
+    {id:"m1w1d2e2", title:"Zona 2 adelante – 15 min", detail:"Resistencia 4–5. Cadencia 65 rpm. Empuja con el talón para activar glúteo mayor.", meta:["15 min","Z2","Res. 4–5"]},
+    {id:"m1w1d2e3", title:"Pedaleo invertido – 10 min Z2", detail:"Resistencia 3–4. Marcha atrás. Activa bíceps femoral y gemelos.", meta:["10 min","Z2","Invertido"]},
+    {id:"m1w1d2e4", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]}
+  ]},
+  m1w2: { label:"Elíptica · 35 min · Pirámide de resistencia", exercises:[
+    {id:"m1w2d2e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]},
+    {id:"m1w2d2e2", title:"Pirámide ascendente – 3 × 5 min", detail:"Res. 4 → 6 → 8. Cadencia 65 rpm.", meta:["3×5 min","Res. 4→8","Z2→Z3"]},
+    {id:"m1w2d2e3", title:"Pirámide descendente – 2 × 5 min", detail:"Res. 6 → 4. Entrena recuperación cardiovascular.", meta:["2×5 min","Res. 6→4"]},
+    {id:"m1w2d2e4", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]}
+  ]},
+  m1w3: { label:"Elíptica · 40 min · Zona 2 extendida + brazos", exercises:[
+    {id:"m1w3d2e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]},
+    {id:"m1w3d2e2", title:"Zona 2 – 30 min con foco en brazos", detail:"Resistencia 5. Cadencia 65–70 rpm. Brazos activos y coordinados. Recuperación aeróbica post-HIIT del lunes.", meta:["30 min","Z2","Res. 5"]},
+    {id:"m1w3d2e3", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]}
+  ]},
+  m1w4: { label:"Elíptica · 35 min · HIIT + Tabata", exercises:[
+    {id:"m1w4d2e1", title:"Calentamiento – 5 min Zona 1", detail:"Resistencia 2–3.", meta:["5 min","Z1"]},
+    {id:"m1w4d2e2", title:"Zona 2 base – 10 min", detail:"Resistencia 5. Cadencia 65 rpm.", meta:["10 min","Z2"]},
+    {id:"m1w4d2e3", title:"HIIT 40/20 – 6 rondas", detail:"40 seg resistencia 9 (Z4) + 20 seg resistencia 2 (Z1). Más exigente que el 30/30.", meta:["6 rondas","40/20 seg","Z4/Z1"]},
+    {id:"m1w4d2e4", title:"Tabata – 4 rondas", detail:"20 seg resistencia 10, máximo esfuerzo. 10 seg quieto. 4 repeticiones.", meta:["4 rondas","20/10 seg","Tabata"]},
+    {id:"m1w4d2e5", title:"Enfriamiento – 5 min Zona 1", detail:"Resistencia 2.", meta:["5 min","Z1"]}
+  ]}
+};
+
+// SAT/SUN OPTIONAL
+const WEEKEND_OPT = {
+  sat: { label:"Elíptica · 20 min · Opcional post-natación", exercises:[
+    {id:"we_sat_e1", title:"Sesión opcional – 20 min Zona 1", detail:"Solo si las piernas lo permiten. Resistencia 2–3. Si sientes fatiga de la natación, omite sin remordimiento.", meta:["20 min","Z1","Opcional"]}
+  ]},
+  sun: { label:"Elíptica · 25 min · Opcional", exercises:[
+    {id:"we_sun_e1", title:"Descarga activa – 25 min Zona 1", detail:"Resistencia 1–2. Cadencia 45–55 rpm. Si el fin de semana fue activo o te sientes cansado, descansa. Si tienes energía, mantén el hábito.", meta:["25 min","Z1","Opcional","Recuperación"]}
+  ]}
+};
+
+// MES 2 DATA
+const MES2_WEEKS = [
+  { week:1, label:"Semana 5", days:[
+    {id:"m2w1d1",name:"Lunes",tags:["eliptica"],intensity:"mod",isMonday:true,weekKey:"m2w1"},
+    {id:"m2w1d2",name:"Martes",tags:["eliptica"],intensity:"mod",weekKey:"m2w1"},
+    {id:"m2w1d3",name:"Miércoles",tags:["natacion","eliptica"],intensity:"mod",isSwimDay:true,weekKey:"m2w1"},
+    {id:"m2w1d4",name:"Jueves",tags:["eliptica"],intensity:"mod",isThursday:true,weekKey:"m2w1"},
+    {id:"m2w1d5",name:"Viernes",tags:["natacion","eliptica"],intensity:"light",isSwimDay:true,isFriday:true,weekKey:"m2w1"},
+    {id:"m2w1d6",name:"Sábado",tags:["natacion"],intensity:"light",isSwimDay:true,isWeekend:true,isSat:true,weekKey:"m2w1"},
+    {id:"m2w1d7",name:"Domingo",tags:["eliptica"],intensity:"light",isWeekend:true,isSun:true,weekKey:"m2w1"}
+  ]},
+  { week:2, label:"Semana 6", days:[
+    {id:"m2w2d1",name:"Lunes",tags:["eliptica"],intensity:"hard",isMonday:true,weekKey:"m2w2"},
+    {id:"m2w2d2",name:"Martes",tags:["eliptica"],intensity:"hiit",weekKey:"m2w2"},
+    {id:"m2w2d3",name:"Miércoles",tags:["natacion","eliptica"],intensity:"mod",isSwimDay:true,weekKey:"m2w2"},
+    {id:"m2w2d4",name:"Jueves",tags:["eliptica"],intensity:"hard",isThursday:true,weekKey:"m2w2"},
+    {id:"m2w2d5",name:"Viernes",tags:["natacion","eliptica"],intensity:"light",isSwimDay:true,isFriday:true,weekKey:"m2w2"},
+    {id:"m2w2d6",name:"Sábado",tags:["natacion"],intensity:"light",isSwimDay:true,isWeekend:true,isSat:true,weekKey:"m2w2"},
+    {id:"m2w2d7",name:"Domingo",tags:["eliptica"],intensity:"light",isWeekend:true,isSun:true,weekKey:"m2w2"}
+  ]},
+  { week:3, label:"Semana 7", days:[
+    {id:"m2w3d1",name:"Lunes",tags:["eliptica"],intensity:"mod",isMonday:true,weekKey:"m2w3"},
+    {id:"m2w3d2",name:"Martes",tags:["eliptica"],intensity:"hard",weekKey:"m2w3"},
+    {id:"m2w3d3",name:"Miércoles",tags:["natacion","eliptica"],intensity:"mod",isSwimDay:true,weekKey:"m2w3"},
+    {id:"m2w3d4",name:"Jueves",tags:["eliptica"],intensity:"mod",isThursday:true,weekKey:"m2w3"},
+    {id:"m2w3d5",name:"Viernes",tags:["natacion","eliptica"],intensity:"light",isSwimDay:true,isFriday:true,weekKey:"m2w3"},
+    {id:"m2w3d6",name:"Sábado",tags:["natacion"],intensity:"light",isSwimDay:true,isWeekend:true,isSat:true,weekKey:"m2w3"},
+    {id:"m2w3d7",name:"Domingo",tags:["eliptica"],intensity:"light",isWeekend:true,isSun:true,weekKey:"m2w3"}
+  ]},
+  { week:4, label:"Semana 8", days:[
+    {id:"m2w4d1",name:"Lunes",tags:["eliptica"],intensity:"hiit",isMonday:true,weekKey:"m2w4"},
+    {id:"m2w4d2",name:"Martes",tags:["eliptica"],intensity:"hard",weekKey:"m2w4"},
+    {id:"m2w4d3",name:"Miércoles",tags:["natacion","eliptica"],intensity:"mod",isSwimDay:true,weekKey:"m2w4"},
+    {id:"m2w4d4",name:"Jueves",tags:["eliptica"],intensity:"hard",isThursday:true,weekKey:"m2w4"},
+    {id:"m2w4d5",name:"Viernes",tags:["natacion","eliptica"],intensity:"light",isSwimDay:true,isFriday:true,weekKey:"m2w4"},
+    {id:"m2w4d6",name:"Sábado",tags:["natacion"],intensity:"light",isSwimDay:true,isWeekend:true,isSat:true,weekKey:"m2w4"},
+    {id:"m2w4d7",name:"Domingo",tags:["eliptica"],intensity:"light",isWeekend:true,isSun:true,weekKey:"m2w4"}
+  ]}
+];
+
+// Generic M2 sessions (escalated from M1)
+const M2_MON = {
+  m2w1:{ varA:{label:"Elíptica · 30 min · Z2 suave",exercises:[{id:"m2w1d1A1",title:"Calentamiento 5 min Z1",detail:"Resistencia 2.",meta:["5 min","Z1"]},{id:"m2w1d1A2",title:"Zona 2 – 20 min",detail:"Resistencia 5. Cadencia 65 rpm.",meta:["20 min","Z2","Res. 5"]},{id:"m2w1d1A3",title:"Enfriamiento 5 min Z1",detail:"Resistencia 2.",meta:["5 min","Z1"]}]},
+       varB:{label:"Elíptica · 40 min · Z2 con picos Z3",exercises:[{id:"m2w1d1B1",title:"Calentamiento 5 min Z1",detail:"Resistencia 2.",meta:["5 min","Z1"]},{id:"m2w1d1B2",title:"Zona 2 – 25 min + 3 picos Z3",detail:"Base Z2 resistencia 5. Cada 8 min sube 90 seg a resistencia 7 (Z3).",meta:["30 min","Z2→Z3","Res. 5–7"]},{id:"m2w1d1B3",title:"Enfriamiento 5 min Z1",detail:"Resistencia 2.",meta:["5 min","Z1"]}]}},
+  m2w2:{ varA:{label:"Elíptica · 35 min · Intervalos moderados",exercises:[{id:"m2w2d1A1",title:"Calentamiento 5 min Z1",detail:"Resistencia 2.",meta:["5 min","Z1"]},{id:"m2w2d1A2",title:"4 × (3 min Z2 + 2 min Z1)",detail:"Z2 resistencia 5.",meta:["4 rondas","Z2→Z1"]},{id:"m2w2d1A3",title:"Enfriamiento 5 min Z1",detail:"Resistencia 2.",meta:["5 min","Z1"]}]},
+       varB:{label:"Elíptica · 45 min · Intervalos Z2–Z3 extendidos",exercises:[{id:"m2w2d1B1",title:"Calentamiento 5 min Z1",detail:"Resistencia 2.",meta:["5 min","Z1"]},{id:"m2w2d1B2",title:"6 × (3 min Z2 + 2 min Z3)",detail:"Versión extendida con 6 rondas. Z3 resistencia 7.",meta:["6 rondas","Z2→Z3","30 min"]},{id:"m2w2d1B3",title:"Enfriamiento 5 min Z1",detail:"Resistencia 2.",meta:["5 min","Z1"]}]}},
+  m2w3:{ varA:{label:"Elíptica · 35 min · Mixta suave",exercises:[{id:"m2w3d1A1",title:"Calentamiento 5 min Z1",detail:"Resistencia 2.",meta:["5 min","Z1"]},{id:"m2w3d1A2",title:"15 min adelante + 10 min invertido Z2",detail:"Resistencia 5 adelante, 4 invertido.",meta:["25 min","Mixta","Z2"]},{id:"m2w3d1A3",title:"Enfriamiento 5 min Z1",detail:"Resistencia 2.",meta:["5 min","Z1"]}]},
+       varB:{label:"Elíptica · 35 min · HIIT 30/30 avanzado",exercises:[{id:"m2w3d1B1",title:"Calentamiento 5 min Z1",detail:"Resistencia 2.",meta:["5 min","Z1"]},{id:"m2w3d1B2",title:"HIIT 30/30 – 12 rondas",detail:"12 rondas en lugar de 10. Resistencia 10 en los picos.",meta:["12 rondas","Z4/Z1"]},{id:"m2w3d1B3",title:"Z2 transición 5 min",detail:"Resistencia 4.",meta:["5 min","Z2"]},{id:"m2w3d1B4",title:"Enfriamiento 5 min Z1",detail:"Resistencia 2.",meta:["5 min","Z1"]}]}},
+  m2w4:{ varA:{label:"Elíptica · 35 min · Escalera media",exercises:[{id:"m2w4d1A1",title:"Calentamiento 5 min Z1",detail:"Resistencia 2.",meta:["5 min","Z1"]},{id:"m2w4d1A2",title:"Escalera 4 × 5 min",detail:"Res. 5→6→7→8.",meta:["4×5 min","Res. 5→8"]},{id:"m2w4d1A3",title:"Enfriamiento 5 min Z1",detail:"Resistencia 2.",meta:["5 min","Z1"]}]},
+       varB:{label:"Elíptica · 45 min · Escalera completa extendida",exercises:[{id:"m2w4d1B1",title:"Calentamiento 5 min Z1",detail:"Resistencia 2.",meta:["5 min","Z1"]},{id:"m2w4d1B2",title:"Escalera 7 × 5 min",detail:"Res. 4→5→6→7→8→9→10. El nivel 10 son los últimos 5 min.",meta:["7×5 min","Res. 4→10"]},{id:"m2w4d1B3",title:"Enfriamiento 5 min Z1",detail:"Resistencia 2.",meta:["5 min","Z1"]}]}}
+};
+
+// ============================================================
+// PLAN STRUCTURE
+// ============================================================
+const MONTHS = [
+  { month:1, label:"Mes 1 · Adaptación", weeks:[
+    { week:1, label:"Semana 1", days:[
+      {id:"m1w1d1",name:"Lunes",tags:["eliptica"],intensity:"mod",isMonday:true,weekKey:"m1w1"},
+      {id:"m1w1d2",name:"Martes",tags:["eliptica"],intensity:"light",weekKey:"m1w1"},
+      {id:"m1w1d3",name:"Miércoles",tags:["natacion","eliptica"],intensity:"mod",isSwimDay:true,weekKey:"m1w1"},
+      {id:"m1w1d4",name:"Jueves",tags:["eliptica"],intensity:"mod",isThursday:true,weekKey:"m1w1"},
+      {id:"m1w1d5",name:"Viernes",tags:["natacion","eliptica"],intensity:"light",isSwimDay:true,isFriday:true,weekKey:"m1w1"},
+      {id:"m1w1d6",name:"Sábado",tags:["natacion"],intensity:"light",isSwimDay:true,isWeekend:true,isSat:true,weekKey:"m1w1"},
+      {id:"m1w1d7",name:"Domingo",tags:["eliptica"],intensity:"light",isWeekend:true,isSun:true,weekKey:"m1w1"}
+    ]},
+    { week:2, label:"Semana 2", days:[
+      {id:"m1w2d1",name:"Lunes",tags:["eliptica"],intensity:"hard",isMonday:true,weekKey:"m1w2"},
+      {id:"m1w2d2",name:"Martes",tags:["eliptica"],intensity:"mod",weekKey:"m1w2"},
+      {id:"m1w2d3",name:"Miércoles",tags:["natacion","eliptica"],intensity:"mod",isSwimDay:true,weekKey:"m1w2"},
+      {id:"m1w2d4",name:"Jueves",tags:["eliptica"],intensity:"hard",isThursday:true,weekKey:"m1w2"},
+      {id:"m1w2d5",name:"Viernes",tags:["natacion","eliptica"],intensity:"light",isSwimDay:true,isFriday:true,weekKey:"m1w2"},
+      {id:"m1w2d6",name:"Sábado",tags:["natacion"],intensity:"light",isSwimDay:true,isWeekend:true,isSat:true,weekKey:"m1w2"},
+      {id:"m1w2d7",name:"Domingo",tags:["eliptica"],intensity:"light",isWeekend:true,isSun:true,weekKey:"m1w2"}
+    ]},
+    { week:3, label:"Semana 3", days:[
+      {id:"m1w3d1",name:"Lunes",tags:["eliptica"],intensity:"hiit",isMonday:true,weekKey:"m1w3"},
+      {id:"m1w3d2",name:"Martes",tags:["eliptica"],intensity:"mod",weekKey:"m1w3"},
+      {id:"m1w3d3",name:"Miércoles",tags:["natacion","eliptica"],intensity:"mod",isSwimDay:true,weekKey:"m1w3"},
+      {id:"m1w3d4",name:"Jueves",tags:["eliptica"],intensity:"hard",isThursday:true,weekKey:"m1w3"},
+      {id:"m1w3d5",name:"Viernes",tags:["natacion","eliptica"],intensity:"light",isSwimDay:true,isFriday:true,weekKey:"m1w3"},
+      {id:"m1w3d6",name:"Sábado",tags:["natacion"],intensity:"light",isSwimDay:true,isWeekend:true,isSat:true,weekKey:"m1w3"},
+      {id:"m1w3d7",name:"Domingo",tags:["eliptica"],intensity:"light",isWeekend:true,isSun:true,weekKey:"m1w3"}
+    ]},
+    { week:4, label:"Semana 4", days:[
+      {id:"m1w4d1",name:"Lunes",tags:["eliptica"],intensity:"hard",isMonday:true,weekKey:"m1w4"},
+      {id:"m1w4d2",name:"Martes",tags:["eliptica"],intensity:"hiit",weekKey:"m1w4"},
+      {id:"m1w4d3",name:"Miércoles",tags:["natacion","eliptica"],intensity:"mod",isSwimDay:true,weekKey:"m1w4"},
+      {id:"m1w4d4",name:"Jueves",tags:["eliptica"],intensity:"mod",isThursday:true,weekKey:"m1w4"},
+      {id:"m1w4d5",name:"Viernes",tags:["natacion","eliptica"],intensity:"light",isSwimDay:true,isFriday:true,weekKey:"m1w4"},
+      {id:"m1w4d6",name:"Sábado",tags:["natacion"],intensity:"light",isSwimDay:true,isWeekend:true,isSat:true,weekKey:"m1w4"},
+      {id:"m1w4d7",name:"Domingo",tags:["eliptica"],intensity:"light",isWeekend:true,isSun:true,weekKey:"m1w4"}
+    ]}
+  ]},
+  { month:2, label:"Mes 2 · Progresión", weeks: MES2_WEEKS }
+];
 
 // ============================================================
 // STATE
 // ============================================================
-const SK = 'training_v2';
-let state = {};
-let currentMonth = 0;
-
-function loadState() { try { return JSON.parse(localStorage.getItem(SK)) || {}; } catch { return {}; } }
-function saveState() { try { localStorage.setItem(SK, JSON.stringify(state)); } catch {} }
-
-state = loadState();
+const SK='training_v3';
+let state={};
+let currentMonth=0;
+function loadState(){try{return JSON.parse(localStorage.getItem(SK))||{};}catch{return {};}}
+function saveState(){try{localStorage.setItem(SK,JSON.stringify(state));}catch{}}
+state=loadState();
 
 // ============================================================
 // HELPERS
 // ============================================================
-function tagHTML(t) {
-  const map = { natacion:['tag-natacion','Natación'], eliptica:['tag-eliptica','Elíptica'], hiit:['tag-hiit','HIIT'], futbol:['tag-futbol','Fútbol'], descanso:['tag-descanso','Descanso'] };
-  const [cls,label] = map[t] || ['tag-descanso',t];
+function tagHTML(t){
+  const map={natacion:['tag-natacion','Natación'],eliptica:['tag-eliptica','Elíptica'],hiit:['tag-hiit','HIIT'],futbol:['tag-futbol','Fútbol'],descanso:['tag-descanso','Descanso']};
+  const[cls,label]=map[t]||['tag-descanso',t];
   return `<span class="tag ${cls}">${label}</span>`;
 }
-
-function zoneClass(z) {
-  if (!z) return '';
-  const m = z.match(/Z(\d)/);
-  return m ? (['','z1','z2','z3','z4'][+m[1]] || '') : '';
+function zoneClass(z){if(!z)return '';const m=z.match(/Z(\d)/);return m?(['','z1','z2','z3','z4'][+m[1]]||''):'';}
+function intBadge(i){const map={light:['int-light','Suave'],mod:['int-mod','Moderado'],hard:['int-hard','Intenso'],hiit:['int-hiit','HIIT']};const[cls,label]=map[i]||[];return cls?`<span class="intensity-badge ${cls}">${label}</span>`:'';}
+function exHTML(ex){
+  const done=state[ex.id]?' done':'';const check=state[ex.id]?'✓':'';
+  const pills=(ex.meta||[]).map(m=>`<span class="ex-pill ${zoneClass(m)}">${m}</span>`).join('');
+  return `<li class="exercise-item${done}" onclick="toggleEx('${ex.id}')" data-exid="${ex.id}"><div class="ex-check">${check}</div><div class="ex-body"><div class="ex-title">${ex.title}</div><div class="ex-detail">${ex.detail}</div><div class="ex-meta">${pills}</div></div></li>`;
 }
-
-function intBadge(i) {
-  const map = { light:['int-light','Suave'], mod:['int-mod','Moderado'], hard:['int-hard','Intenso'], hiit:['int-hiit','HIIT'] };
-  const [cls,label] = map[i] || [];
-  return cls ? `<span class="intensity-badge ${cls}">${label}</span>` : '';
-}
-
-function getThursdayKey(dayId) {
-  const parts = dayId.split('d');
-  return parts[0];
-}
+function exListHTML(exercises){return `<ul class="exercise-list">${exercises.map(exHTML).join('')}</ul>`;}
 
 // ============================================================
 // SWIM LOG
 // ============================================================
-function swimLogHTML(dayId) {
-  const saved = state[`swim_${dayId}`] || {};
-  const hasSaved = Object.keys(saved).length > 0;
-  return `
-    <div class="swim-log">
-      <div class="swim-log-grid">
-        <div class="log-field"><label>⏱ Duración</label><input type="text" placeholder="ej. 45 min" value="${saved.duration||''}" oninput="saveSwimLog('${dayId}','duration',this.value)"></div>
-        <div class="log-field"><label>🔥 Calorías</label><input type="text" placeholder="ej. 320 kcal" value="${saved.calories||''}" oninput="saveSwimLog('${dayId}','calories',this.value)"></div>
-        <div class="log-field"><label>💪 Brazadas</label><input type="text" placeholder="ej. 1240" value="${saved.strokes||''}" oninput="saveSwimLog('${dayId}','strokes',this.value)"></div>
-        <div class="log-field"><label>❤️ FC Promedio</label><input type="text" placeholder="ej. 142 bpm" value="${saved.hr||''}" oninput="saveSwimLog('${dayId}','hr',this.value)"></div>
-        <div class="log-field full"><label>📝 Notas del entrenador</label><textarea placeholder="Series realizadas, observaciones..." oninput="saveSwimLog('${dayId}','notes',this.value)">${saved.notes||''}</textarea></div>
-      </div>
-      <div class="log-saved" id="swimsaved_${dayId}" style="${hasSaved?'display:block':''}">✓ Registro guardado</div>
-    </div>`;
+function swimLogHTML(dayId){
+  const s=state[`swim_${dayId}`]||{};const hasSaved=Object.keys(s).length>0;
+  return `<div class="swim-log"><div class="swim-log-grid">
+    <div class="log-field"><label>⏱ Duración</label><input type="text" placeholder="ej. 45 min" value="${s.duration||''}" oninput="saveSwimLog('${dayId}','duration',this.value)"></div>
+    <div class="log-field"><label>🔥 Calorías</label><input type="text" placeholder="ej. 320 kcal" value="${s.calories||''}" oninput="saveSwimLog('${dayId}','calories',this.value)"></div>
+    <div class="log-field"><label>💪 Brazadas</label><input type="text" placeholder="ej. 1240" value="${s.strokes||''}" oninput="saveSwimLog('${dayId}','strokes',this.value)"></div>
+    <div class="log-field"><label>❤️ FC Promedio</label><input type="text" placeholder="ej. 142 bpm" value="${s.hr||''}" oninput="saveSwimLog('${dayId}','hr',this.value)"></div>
+    <div class="log-field full"><label>📝 Notas del entrenador</label><textarea placeholder="Series, observaciones técnicas..." oninput="saveSwimLog('${dayId}','notes',this.value)">${s.notes||''}</textarea></div>
+  </div><div class="log-saved" id="swimsaved_${dayId}" style="${hasSaved?'display:block':''}">✓ Registro guardado</div></div>`;
 }
-
-function saveSwimLog(dayId, field, value) {
-  if (!state[`swim_${dayId}`]) state[`swim_${dayId}`] = {};
-  state[`swim_${dayId}`][field] = value;
-  saveState();
-  const el = document.getElementById(`swimsaved_${dayId}`);
-  if (el) el.style.display = 'block';
-}
+function saveSwimLog(dayId,field,value){if(!state[`swim_${dayId}`])state[`swim_${dayId}`]={};state[`swim_${dayId}`][field]=value;saveState();const el=document.getElementById(`swimsaved_${dayId}`);if(el)el.style.display='block';}
 
 // ============================================================
 // FOOTBALL LOG
 // ============================================================
-function footballLogHTML(dayId) {
-  const saved = state[`foot_${dayId}`] || {};
-  const hasSaved = Object.keys(saved).length > 0;
-  return `
-    <div class="foot-log">
-      <div class="foot-log-grid">
-        <div class="log-field"><label>⏱ Duración</label><input type="text" placeholder="ej. 60 min" value="${saved.duration||''}" oninput="saveFootLog('${dayId}','duration',this.value)"></div>
-        <div class="log-field"><label>🔥 Calorías</label><input type="text" placeholder="ej. 480 kcal" value="${saved.calories||''}" oninput="saveFootLog('${dayId}','calories',this.value)"></div>
-        <div class="log-field full"><label>❤️ FC Promedio</label><input type="text" placeholder="ej. 158 bpm" value="${saved.hr||''}" oninput="saveFootLog('${dayId}','hr',this.value)"></div>
-        <div class="log-field full"><label>📝 Notas del partido</label><textarea placeholder="Resultado, posición, observaciones..." oninput="saveFootLog('${dayId}','notes',this.value)">${saved.notes||''}</textarea></div>
-      </div>
-      <div class="log-saved" id="footsaved_${dayId}" style="${hasSaved?'display:block':''}">✓ Registro guardado</div>
-    </div>`;
+function footballLogHTML(dayId){
+  const s=state[`foot_${dayId}`]||{};const hasSaved=Object.keys(s).length>0;
+  return `<div class="foot-log"><div class="foot-log-grid">
+    <div class="log-field"><label>⏱ Duración</label><input type="text" placeholder="ej. 60 min" value="${s.duration||''}" oninput="saveFootLog('${dayId}','duration',this.value)"></div>
+    <div class="log-field"><label>🔥 Calorías</label><input type="text" placeholder="ej. 480 kcal" value="${s.calories||''}" oninput="saveFootLog('${dayId}','calories',this.value)"></div>
+    <div class="log-field full"><label>❤️ FC Promedio</label><input type="text" placeholder="ej. 158 bpm" value="${s.hr||''}" oninput="saveFootLog('${dayId}','hr',this.value)"></div>
+    <div class="log-field full"><label>📝 Notas del partido</label><textarea placeholder="Resultado, posición, observaciones..." oninput="saveFootLog('${dayId}','notes',this.value)">${s.notes||''}</textarea></div>
+  </div><div class="log-saved" id="footsaved_${dayId}" style="${hasSaved?'display:block':''}">✓ Registro guardado</div></div>`;
 }
+function saveFootLog(dayId,field,value){if(!state[`foot_${dayId}`])state[`foot_${dayId}`]={};state[`foot_${dayId}`][field]=value;saveState();const el=document.getElementById(`footsaved_${dayId}`);if(el)el.style.display='block';}
 
-function saveFootLog(dayId, field, value) {
-  if (!state[`foot_${dayId}`]) state[`foot_${dayId}`] = {};
-  state[`foot_${dayId}`][field] = value;
-  saveState();
-  const el = document.getElementById(`footsaved_${dayId}`);
-  if (el) el.style.display = 'block';
+// ============================================================
+// THURSDAY BLOCK
+// ============================================================
+function thursdayBlockHTML(day){
+  const dayId=day.id;const wk=day.weekKey;
+  const isFootball=state[`thu_football_${dayId}`]===true;
+  const ellData=THU_ELL[wk]||null;
+  return `<div class="session-block">
+    <div class="session-label" style="color:var(--text-muted)">Jueves · elige tu actividad</div>
+    <div class="toggle-wrap">
+      <span class="toggle-label">Hoy juego fútbol</span>
+      <label class="toggle-switch"><input type="checkbox" ${isFootball?'checked':''} onchange="toggleThursday('${dayId}',this.checked)"><span class="toggle-slider"></span></label>
+    </div>
+    <div class="panel ${isFootball?'active':''}" id="panel_foot_${dayId}">
+      <div class="session-label foot">Fútbol · Registro del partido</div>
+      ${footballLogHTML(dayId)}
+    </div>
+    <div class="panel ${!isFootball?'active':''}" id="panel_ell_${dayId}">
+      ${ellData?`<div class="session-label move">${ellData.label}</div>${exListHTML(ellData.exercises)}`:'<div class="rest-day-msg">Sin sesión asignada para este jueves</div>'}
+    </div>
+  </div>`;
+}
+function toggleThursday(dayId,isFootball){
+  state[`thu_football_${dayId}`]=isFootball;saveState();
+  document.getElementById(`panel_foot_${dayId}`).className=`panel ${isFootball?'active':''}`;
+  document.getElementById(`panel_ell_${dayId}`).className=`panel ${!isFootball?'active':''}`;
+  updateStats();updateWeekPcts();
 }
 
 // ============================================================
-// THURSDAY TOGGLE
+// MONDAY BLOCK (two variants)
 // ============================================================
-function thursdayHTML(day) {
-  const dayId = day.id;
-  const tkey = getThursdayKey(dayId);
-  const isFootball = state[`thu_football_${dayId}`] === true;
-  const ellSession = THURSDAY_ELLIPTICAL[tkey];
-
-  return `
-    <div class="session-block">
-      <div class="session-label" style="color:var(--text-muted)">Jueves · elige tu actividad</div>
-      <div class="toggle-wrap">
-        <span class="toggle-label">Hoy juego fútbol</span>
-        <label class="toggle-switch">
-          <input type="checkbox" ${isFootball?'checked':''} onchange="toggleThursday('${dayId}',this.checked)">
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
-      <div class="panel ${isFootball?'active':''}" id="panel_foot_${dayId}">
-        <div class="session-label foot">Fútbol · Registro del partido</div>
-        ${footballLogHTML(dayId)}
-      </div>
-      <div class="panel ${!isFootball?'active':''}" id="panel_ell_${dayId}">
-        ${ellSession ? `<div class="session-label move">${ellSession.label}</div><ul class="exercise-list">${ellSession.exercises.map(ex=>exHTML(ex)).join('')}</ul>` : '<div class="rest-day-msg">Sin sesión asignada</div>'}
-      </div>
-    </div>`;
+function mondayBlockHTML(day){
+  const dayId=day.id;const wk=day.weekKey;
+  const variantKey=`mon_variant_${dayId}`;
+  const chosen=state[variantKey]||'B';
+  // Get data from the right library
+  const lib=wk.startsWith('m2')?M2_MON:MON_SESSIONS;
+  const data=lib[wk];
+  if(!data) return '<div class="rest-day-msg">Sesión en preparación</div>';
+  const sA=data.varA;const sB=data.varB;
+  return `<div class="session-block">
+    <div class="session-label move">Lunes · elige según tu fin de semana</div>
+    <div class="variant-tabs">
+      <button class="variant-btn ${chosen==='A'?'active':''}" onclick="chooseVariant('${dayId}','A')">Fin de semana activo</button>
+      <button class="variant-btn ${chosen==='B'?'active':''}" onclick="chooseVariant('${dayId}','B')">Fin de semana descansado</button>
+    </div>
+    <div class="alert-banner info" id="mon_hint_${dayId}" style="${chosen==='A'?'':'display:none'}">
+      Carga reducida — acumulaste entrenamiento el fin de semana.
+    </div>
+    <div class="panel ${chosen==='A'?'active':''}" id="mon_panA_${dayId}">
+      <div class="session-label move">${sA.label}</div>${exListHTML(sA.exercises)}
+    </div>
+    <div class="panel ${chosen==='B'?'active':''}" id="mon_panB_${dayId}">
+      <div class="session-label move">${sB.label}</div>${exListHTML(sB.exercises)}
+    </div>
+  </div>`;
+}
+function chooseVariant(dayId,v){
+  state[`mon_variant_${dayId}`]=v;saveState();
+  ['A','B'].forEach(x=>{
+    document.getElementById(`mon_pan${x}_${dayId}`).className=`panel ${x===v?'active':''}`;
+    const btn=document.querySelector(`[onclick="chooseVariant('${dayId}','${x}')"]`);
+    if(btn)btn.className=`variant-btn ${x===v?'active':''}`;
+  });
+  const hint=document.getElementById(`mon_hint_${dayId}`);
+  if(hint)hint.style.display=v==='A'?'':'none';
+  updateStats();updateWeekPcts();
 }
 
-function toggleThursday(dayId, isFootball) {
-  state[`thu_football_${dayId}`] = isFootball;
-  saveState();
-  document.getElementById(`panel_foot_${dayId}`).className = `panel ${isFootball?'active':''}`;
-  document.getElementById(`panel_ell_${dayId}`).className = `panel ${!isFootball?'active':''}`;
-  updateStats();
+// ============================================================
+// FRIDAY BLOCK (auto-detects thursday football)
+// ============================================================
+function fridayPostSwimHTML(day){
+  // Find the thursday id for this week
+  const wk=day.weekKey;
+  const month=MONTHS[currentMonth];
+  let thuId=null;
+  month.weeks.forEach(w=>{w.days.forEach(d=>{if(d.weekKey===wk&&d.isThursday)thuId=d.id;});});
+  const hadFootball=thuId&&state[`thu_football_${thuId}`]===true;
+  const lib=wk.startsWith('m2')?null:FRI_REGULAR;
+  const regularData=lib?lib[wk]:null;
+
+  if(hadFootball){
+    return `
+      <div class="alert-banner">⚠ Jugaste fútbol ayer — elíptica reducida a 15 min de descarga.</div>
+      <div class="session-label move">${FRI_POST_FOOT.label}</div>
+      ${exListHTML(FRI_POST_FOOT.exercises)}`;
+  }
+  if(regularData){
+    return `<div class="session-label move">${regularData.label}</div>${exListHTML(regularData.exercises)}`;
+  }
+  // M2 fallback
+  return `<div class="session-label move">Elíptica post-natación · 20 min · Z1</div>
+    ${exListHTML([{id:`${day.id}_fri1`,title:"Zona 1 – 20 min",detail:"Resistencia 3. Cadencia 60 rpm.",meta:["20 min","Z1"]}])}`;
 }
 
 // ============================================================
 // WEEKEND OPTIONAL
 // ============================================================
-function weekendOptHTML(session, dayId, sessionIdx) {
-  const optKey = `opt_${dayId}_${sessionIdx}`;
-  const isActive = state[optKey] === true;
-  return `
-    <div class="session-block">
-      <div class="toggle-wrap">
-        <span class="toggle-label" style="color:var(--accent-rest)">Realizar elíptica hoy</span>
-        <label class="toggle-switch">
-          <input type="checkbox" ${isActive?'checked':''} onchange="toggleOptional('${optKey}',this.checked,'opt_panel_${dayId}_${sessionIdx}')">
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
-      <div class="panel ${isActive?'active':''}" id="opt_panel_${dayId}_${sessionIdx}">
-        <div class="session-label move">${session.label}</div>
-        <ul class="exercise-list">${session.exercises.map(ex=>exHTML(ex)).join('')}</ul>
-      </div>
-    </div>`;
-}
-
-function toggleOptional(key, val, panelId) {
-  state[key] = val;
-  saveState();
-  document.getElementById(panelId).className = `panel ${val?'active':''}`;
-  updateStats();
-}
-
-// ============================================================
-// EXERCISE HTML
-// ============================================================
-function exHTML(ex) {
-  const done = state[ex.id] ? ' done' : '';
-  const check = state[ex.id] ? '✓' : '';
-  const pills = (ex.meta||[]).map(m=>`<span class="ex-pill ${zoneClass(m)}">${m}</span>`).join('');
-  return `<li class="exercise-item${done}" onclick="toggleEx('${ex.id}')" data-exid="${ex.id}">
-    <div class="ex-check">${check}</div>
-    <div class="ex-body">
-      <div class="ex-title">${ex.title}</div>
-      <div class="ex-detail">${ex.detail}</div>
-      <div class="ex-meta">${pills}</div>
+function weekendOptHTML(day,type){
+  const optKey=`opt_${day.id}_${type}`;
+  const isActive=state[optKey]===true;
+  const data=WEEKEND_OPT[type];
+  return `<div class="session-block">
+    <div class="toggle-wrap">
+      <span class="toggle-label" style="color:var(--accent-rest)">Realizar elíptica hoy</span>
+      <label class="toggle-switch"><input type="checkbox" ${isActive?'checked':''} onchange="toggleOpt('${optKey}','opt_panel_${day.id}_${type}',this.checked)"><span class="toggle-slider"></span></label>
     </div>
-  </li>`;
+    <div class="panel ${isActive?'active':''}" id="opt_panel_${day.id}_${type}">
+      <div class="session-label move">${data.label}</div>${exListHTML(data.exercises)}
+    </div>
+  </div>`;
 }
-
-function toggleEx(exId) {
-  state[exId] = !state[exId];
-  saveState();
-  const item = document.querySelector(`[data-exid="${exId}"]`);
-  if (!item) return;
-  item.classList.toggle('done', state[exId]);
-  item.querySelector('.ex-check').textContent = state[exId] ? '✓' : '';
-  updateDayCard(item);
-  updateStats();
-  updateWeekPcts();
-}
-
-function updateDayCard(exItem) {
-  const dayContent = exItem.closest('.day-content');
-  if (!dayContent) return;
-  const card = dayContent.closest('.day-card');
-  const allItems = dayContent.querySelectorAll('.exercise-item');
-  const doneItems = dayContent.querySelectorAll('.exercise-item.done');
-  const allDone = allItems.length > 0 && allItems.length === doneItems.length;
-  card.classList.toggle('completed', allDone);
-  const btn = dayContent.querySelector('.mark-day-btn');
-  if (btn) btn.textContent = allDone ? '✓ Día completado' : '○ Marcar día como completado';
+function toggleOpt(key,panelId,val){
+  state[key]=val;saveState();
+  document.getElementById(panelId).className=`panel ${val?'active':''}`;
+  updateStats();updateWeekPcts();
 }
 
 // ============================================================
-// RENDER SESSION
+// BUILD DAY CONTENT
 // ============================================================
-function sessionHTML(session, dayId, sessionIdx, isSwimDay, isThursday, isWeekend) {
-  if (isThursday) return thursdayHTML({id:dayId});
-  if (session.isSwimLog) return `
-    <div class="session-block">
-      <div class="session-label water">${session.label}</div>
-      ${swimLogHTML(dayId)}
-    </div>`;
-  if (session.isOptional && isWeekend) return weekendOptHTML(session, dayId, sessionIdx);
-  return `
-    <div class="session-block">
-      <div class="session-label ${session.type}">${session.label}</div>
-      <ul class="exercise-list">${session.exercises.map(ex=>exHTML(ex)).join('')}</ul>
-    </div>`;
-}
+function buildDayContent(day){
+  const wk=day.weekKey;
+  const tueSrc=TUE_SESSIONS[wk];
+  const wedSrc=WED_POST[wk];
+  let html='';
 
-// ============================================================
-// RENDER DAY
-// ============================================================
-function dayHTML(day, weekIdx, dayIdx) {
-  const allExIds = getAllExIds(day);
-  const doneCnt = allExIds.filter(id=>state[id]).length;
-  const dayDone = doneCnt === allExIds.length && allExIds.length > 0;
-
-  const tags = [...day.tags];
-  const thuFootball = day.isThursday && state[`thu_football_${day.id}`];
-  if (thuFootball) { const fi = tags.indexOf('eliptica'); if(fi>-1) tags.splice(fi,1,1,'futbol'); }
-
-  return `
-    <div class="day-card${dayDone?' completed':''}" id="card-${day.id}">
-      <div class="day-header" onclick="toggleDay('${day.id}')">
-        <span class="day-num">S${weekIdx+1}·D${dayIdx+1}</span>
-        <span class="day-name">${day.name}${intBadge(day.intensity)}</span>
-        <div class="day-tags">${day.tags.map(tagHTML).join('')}${day.isWeekend?`<span class="optional-badge">Opcional</span>`:''}</div>
-        <span class="day-chevron">⌄</span>
-      </div>
-      <div class="day-content">
-        ${day.isThursday
-          ? thursdayHTML(day)
-          : day.sessions.map((s,i)=>sessionHTML(s,day.id,i,day.isSwimDay,false,day.isWeekend)).join('')
-        }
-        <button class="mark-day-btn" onclick="markDay('${day.id}',event)">
-          ${dayDone?'✓ Día completado':'○ Marcar día como completado'}
-        </button>
-      </div>
-    </div>`;
-}
-
-// ============================================================
-// GET ALL EXERCISE IDs FOR A DAY
-// ============================================================
-function getAllExIds(day) {
-  let ids = [];
-  if (day.isThursday) {
-    const tkey = getThursdayKey(day.id);
-    const ell = THURSDAY_ELLIPTICAL[tkey];
-    if (ell) ids = ell.exercises.map(e=>e.id);
+  if(day.isMonday){
+    html+=mondayBlockHTML(day);
+  } else if(day.isThursday){
+    html+=thursdayBlockHTML(day);
+  } else if(day.isSwimDay && day.isFriday){
+    html+=`<div class="session-block"><div class="session-label water">Natación con entrenador</div>${swimLogHTML(day.id)}</div>`;
+    html+=`<div class="session-block">${fridayPostSwimHTML(day)}</div>`;
+  } else if(day.isSwimDay && day.isSat){
+    html+=`<div class="session-block"><div class="session-label water">Natación con entrenador</div>${swimLogHTML(day.id)}</div>`;
+    html+=weekendOptHTML(day,'sat');
+  } else if(day.isSun){
+    html+=weekendOptHTML(day,'sun');
+  } else if(day.isSwimDay){
+    // Wednesday
+    html+=`<div class="session-block"><div class="session-label water">Natación con entrenador</div>${swimLogHTML(day.id)}</div>`;
+    if(wedSrc){html+=`<div class="session-block"><div class="session-label move">${wedSrc.label}</div>${exListHTML(wedSrc.exercises)}</div>`;}
+    else{html+=`<div class="session-block"><div class="session-label move">Elíptica post-natación · 20 min</div>${exListHTML([{id:`${day.id}_we1`,title:"Zona 1–2 – 20 min",detail:"Resistencia 4. Cadencia 62 rpm.",meta:["20 min","Z1–Z2"]}])}</div>`;}
+  } else if(tueSrc){
+    html+=`<div class="session-block"><div class="session-label move">${tueSrc.label}</div>${exListHTML(tueSrc.exercises)}</div>`;
   } else {
-    day.sessions.forEach(s => {
-      if (s.exercises) ids.push(...s.exercises.map(e=>e.id));
-    });
+    html+=`<div class="rest-day-msg">Sesión en preparación para el Mes 2</div>`;
+  }
+  return html;
+}
+
+// ============================================================
+// GET EXERCISE IDs FOR STATS
+// ============================================================
+function getDayExIds(day){
+  const wk=day.weekKey;
+  const lib=wk.startsWith('m2')?M2_MON:MON_SESSIONS;
+  let ids=[];
+  if(day.isMonday){
+    const chosen=state[`mon_variant_${day.id}`]||'B';
+    const data=lib[wk];
+    if(data){const v=chosen==='A'?data.varA:data.varB;ids=v.exercises.map(e=>e.id);}
+  } else if(day.isThursday){
+    const isFootball=state[`thu_football_${day.id}`]===true;
+    if(isFootball){ids=[];}
+    else{const ell=THU_ELL[wk];if(ell)ids=ell.exercises.map(e=>e.id);}
+  } else if(day.isSwimDay && day.isFriday){
+    const month=MONTHS[currentMonth];let thuId=null;
+    month.weeks.forEach(w=>{w.days.forEach(d=>{if(d.weekKey===wk&&d.isThursday)thuId=d.id;});});
+    const hadFoot=thuId&&state[`thu_football_${thuId}`]===true;
+    ids=hadFoot?FRI_POST_FOOT.exercises.map(e=>e.id):(FRI_REGULAR[wk]?FRI_REGULAR[wk].exercises.map(e=>e.id):[]);
+  } else if(day.isSat){
+    const optKey=`opt_${day.id}_sat`;
+    if(state[optKey])ids=WEEKEND_OPT.sat.exercises.map(e=>e.id);
+  } else if(day.isSun){
+    const optKey=`opt_${day.id}_sun`;
+    if(state[optKey])ids=WEEKEND_OPT.sun.exercises.map(e=>e.id);
+  } else if(day.isSwimDay){
+    const wd=WED_POST[wk];if(wd)ids=wd.exercises.map(e=>e.id);
+  } else {
+    const ts=TUE_SESSIONS[wk];if(ts)ids=ts.exercises.map(e=>e.id);
   }
   return ids;
 }
 
 // ============================================================
-// RENDER WEEK
+// RENDER DAY
 // ============================================================
-function weekHTML(week, wIdx) {
-  const allExIds = week.days.flatMap(d=>getAllExIds(d));
-  const doneCnt = allExIds.filter(id=>state[id]).length;
-  const pct = allExIds.length ? Math.round(doneCnt/allExIds.length*100) : 0;
-  return `
-    <div class="week-block" id="week-${wIdx}">
-      <div class="week-header">
-        <span class="week-title">${week.label}</span>
-        <span class="week-pct" id="wpct-${wIdx}"><strong>${pct}%</strong> completado</span>
-      </div>
-      ${week.days.map((d,di)=>dayHTML(d,wIdx,di)).join('')}
-    </div>`;
+function dayHTML(day,wIdx,dIdx){
+  const ids=getDayExIds(day);
+  const dayDone=ids.length>0&&ids.every(id=>state[id]);
+  return `<div class="day-card${dayDone?' completed':''}" id="card-${day.id}">
+    <div class="day-header" onclick="toggleDay('${day.id}')">
+      <span class="day-num">S${wIdx+1}·D${dIdx+1}</span>
+      <span class="day-name">${day.name}${intBadge(day.intensity)}</span>
+      <div class="day-tags">${day.tags.map(tagHTML).join('')}${day.isWeekend?'<span class="optional-badge">Opcional</span>':''}</div>
+      <span class="day-chevron">⌄</span>
+    </div>
+    <div class="day-content">
+      ${buildDayContent(day)}
+      <button class="mark-day-btn" onclick="markDay('${day.id}',event)">${dayDone?'✓ Día completado':'○ Marcar día como completado'}</button>
+    </div>
+  </div>`;
 }
 
 // ============================================================
-// RENDER MONTH
+// RENDER WEEK / MONTH
 // ============================================================
-function render() {
-  const month = MONTHS[currentMonth];
-  document.getElementById('month-title').textContent = month.label;
-  document.getElementById('plan-container').innerHTML = month.weeks.map((w,i)=>weekHTML(w,i)).join('');
+function weekHTML(week,wIdx){
+  const ids=week.days.flatMap(d=>getDayExIds(d));
+  const done=ids.filter(id=>state[id]).length;
+  const pct=ids.length?Math.round(done/ids.length*100):0;
+  return `<div class="week-block" id="week-${wIdx}">
+    <div class="week-header">
+      <span class="week-title">${week.label}</span>
+      <span class="week-pct" id="wpct-${wIdx}"><strong>${pct}%</strong> completado</span>
+    </div>
+    ${week.days.map((d,di)=>dayHTML(d,wIdx,di)).join('')}
+  </div>`;
+}
+
+function render(){
+  const month=MONTHS[currentMonth];
+  document.getElementById('month-title').textContent=month.label;
+  document.getElementById('plan-container').innerHTML=month.weeks.map((w,i)=>weekHTML(w,i)).join('');
   updateStats();
 }
 
 // ============================================================
 // INTERACTIONS
 // ============================================================
-function toggleDay(dayId) {
-  document.getElementById('card-'+dayId).classList.toggle('open');
+function toggleDay(dayId){document.getElementById('card-'+dayId).classList.toggle('open');}
+
+function toggleEx(exId){
+  state[exId]=!state[exId];saveState();
+  const item=document.querySelector(`[data-exid="${exId}"]`);
+  if(!item)return;
+  item.classList.toggle('done',state[exId]);
+  item.querySelector('.ex-check').textContent=state[exId]?'✓':'';
+  const dayContent=item.closest('.day-content');
+  if(dayContent){
+    const card=dayContent.closest('.day-card');
+    const all=dayContent.querySelectorAll('.exercise-item');
+    const done=dayContent.querySelectorAll('.exercise-item.done');
+    const allDone=all.length>0&&all.length===done.length;
+    card.classList.toggle('completed',allDone);
+    const btn=dayContent.querySelector('.mark-day-btn');
+    if(btn)btn.textContent=allDone?'✓ Día completado':'○ Marcar día como completado';
+  }
+  updateStats();updateWeekPcts();
 }
 
-function markDay(dayId, e) {
+function markDay(dayId,e){
   e.stopPropagation();
-  const month = MONTHS[currentMonth];
-  const day = month.weeks.flatMap(w=>w.days).find(d=>d.id===dayId);
-  if (!day) return;
-  const ids = getAllExIds(day);
-  const allDone = ids.every(id=>state[id]);
-  ids.forEach(id=>{ state[id]=!allDone; });
-  saveState();
-  render();
+  const month=MONTHS[currentMonth];
+  const day=month.weeks.flatMap(w=>w.days).find(d=>d.id===dayId);
+  if(!day)return;
+  const ids=getDayExIds(day);
+  const allDone=ids.every(id=>state[id]);
+  ids.forEach(id=>{state[id]=!allDone;});
+  saveState();render();
 }
 
-function updateStats() {
-  const month = MONTHS[currentMonth];
-  const allDays = month.weeks.flatMap(w=>w.days);
-  const allExIds = allDays.flatMap(d=>getAllExIds(d));
-  const doneDays = allDays.filter(d=>{
-    const ids=getAllExIds(d);
-    return ids.length>0 && ids.every(id=>state[id]);
-  }).length;
-  const doneEx = allExIds.filter(id=>state[id]).length;
-  const pct = allExIds.length ? Math.round(doneEx/allExIds.length*100) : 0;
-  document.getElementById('days-done').innerHTML = `${doneDays} <span>/ ${allDays.length}</span>`;
-  document.getElementById('ex-done').innerHTML = `${doneEx} <span>/ <span id="ex-total">${allExIds.length}</span></span>`;
-  document.getElementById('pct-done').innerHTML = `${pct}<span>%</span>`;
-  document.getElementById('main-bar').style.width = pct+'%';
-  document.getElementById('pct-label').textContent = pct+'%';
+function updateStats(){
+  const month=MONTHS[currentMonth];
+  const allDays=month.weeks.flatMap(w=>w.days);
+  const allIds=allDays.flatMap(d=>getDayExIds(d));
+  const doneDays=allDays.filter(d=>{const ids=getDayExIds(d);return ids.length>0&&ids.every(id=>state[id]);}).length;
+  const doneEx=allIds.filter(id=>state[id]).length;
+  const pct=allIds.length?Math.round(doneEx/allIds.length*100):0;
+  document.getElementById('days-done').innerHTML=`${doneDays} <span>/ ${allDays.length}</span>`;
+  document.getElementById('ex-done').innerHTML=`${doneEx} <span>/ <span id="ex-total">${allIds.length}</span></span>`;
+  document.getElementById('pct-done').innerHTML=`${pct}<span>%</span>`;
+  document.getElementById('main-bar').style.width=pct+'%';
+  document.getElementById('pct-label').textContent=pct+'%';
 }
 
-function updateWeekPcts() {
-  const month = MONTHS[currentMonth];
+function updateWeekPcts(){
+  const month=MONTHS[currentMonth];
   month.weeks.forEach((w,i)=>{
-    const ids = w.days.flatMap(d=>getAllExIds(d));
-    const done = ids.filter(id=>state[id]).length;
-    const pct = ids.length ? Math.round(done/ids.length*100) : 0;
-    const el = document.getElementById(`wpct-${i}`);
-    if (el) el.innerHTML = `<strong>${pct}%</strong> completado`;
+    const ids=w.days.flatMap(d=>getDayExIds(d));
+    const done=ids.filter(id=>state[id]).length;
+    const pct=ids.length?Math.round(done/ids.length*100):0;
+    const el=document.getElementById(`wpct-${i}`);
+    if(el)el.innerHTML=`<strong>${pct}%</strong> completado`;
   });
 }
 
-function prevMonth() { if(currentMonth>0){currentMonth--;render();} }
-function nextMonth() { if(currentMonth<MONTHS.length-1){currentMonth++;render();} }
-
-function addMonth() {
-  const n = MONTHS.length+1;
-  MONTHS.push({ month:n, label:`Mes ${n} · Por planificar`, weeks:[] });
-  currentMonth = MONTHS.length-1;
-  document.getElementById('month-title').textContent = MONTHS[currentMonth].label;
-  document.getElementById('plan-container').innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-muted);font-family:'DM Mono',monospace;font-size:13px;">Mes ${n} en preparación.<br>Solicita el plan a tu asistente.</div>`;
+function prevMonth(){if(currentMonth>0){currentMonth--;render();}}
+function nextMonth(){if(currentMonth<MONTHS.length-1){currentMonth++;render();}}
+function addMonth(){
+  const n=MONTHS.length+1;
+  MONTHS.push({month:n,label:`Mes ${n} · Por planificar`,weeks:[]});
+  currentMonth=MONTHS.length-1;
+  document.getElementById('month-title').textContent=MONTHS[currentMonth].label;
+  document.getElementById('plan-container').innerHTML=`<div style="text-align:center;padding:40px;color:var(--text-muted);font-family:'DM Mono',monospace;font-size:13px;">Mes ${n} en preparación.<br>Solicita el plan a tu asistente.</div>`;
   updateStats();
 }
-
-function resetAll() {
-  if(!confirm('¿Reiniciar todo el progreso? Esta acción no se puede deshacer.')) return;
-  state={};
-  saveState();
-  render();
-}
+function resetAll(){if(!confirm('¿Reiniciar todo el progreso?'))return;state={};saveState();render();}
 
 render();
 </script>
